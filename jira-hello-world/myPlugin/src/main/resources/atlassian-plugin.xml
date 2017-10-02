@@ -28,7 +28,12 @@
   </web-item>
   <web-item name="Atlassian Developers Site" i18n-name-key="atlassian-developers-site.name" key="atlassian-developers-site" section="my-item-link/my-section" weight="1000">
     <description key="atlassian-developers-site.description">The Atlassian Developers Site Plugin</description>
-    <label key="atlassian-developers-site.label"></label>
+    <label key="atlassian-developers-site.label"/>
     <link linkId="atlassian-developers-site-link">http://developer.atlassian.com/docs</link>
+  </web-item>
+  <web-item name="helloTicket" i18n-name-key="hello-ticket.name" key="hello-ticket" section="operations-operations" weight="1000">
+    <description key="hello-ticket.description">The helloTicket Plugin</description>
+    <label key="hello-ticket.label"></label>
+    <link linkId="hello-ticket-link">http://github.com/twsswt</link>
   </web-item>
 </atlassian-plugin>
