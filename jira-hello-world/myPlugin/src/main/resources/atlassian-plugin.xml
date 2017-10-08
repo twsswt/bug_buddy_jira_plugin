@@ -31,9 +31,9 @@
     <label key="atlassian-developers-site.label"/>
     <link linkId="atlassian-developers-site-link">http://developer.atlassian.com/docs</link>
   </web-item>
-  <web-item name="helloTicket" i18n-name-key="hello-ticket.name" key="hello-ticket" section="operations-operations" weight="1000">
-    <description key="hello-ticket.description">The helloTicket Plugin</description>
-    <label key="hello-ticket.label"></label>
-    <link linkId="hello-ticket-link">http://github.com/twsswt</link>
+  <web-item name="Auto-Configure Assignee" i18n-name-key="auto-configure.name" key="auto-configure" section="operations-operations" weight="1000">
+    <description key="auto-configure.description">The Auto-Configure Assignee Plugin</description>
+    <label key="auto-configure.label">Auto-Configure Assignee</label>
+    <link linkId="auto-configure.link">http://github.com/twsswt</link>
   </web-item>
 </atlassian-plugin>
