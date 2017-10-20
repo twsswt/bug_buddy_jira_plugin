@@ -1,6 +1,6 @@
 package main;
 
-import main.FirefoxIssue;
+import scraper.CSVIssueReader;
 import scraper.Scraper;
 
 import java.util.ArrayList;
@@ -16,8 +16,8 @@ public class Main {
 
         System.out.println(ff);
 
-        Scraper s = new Scraper();
-        ArrayList<FirefoxIssue> issues = s.readFile("/home/stephen/bug_buddy_jira_plugin/project-issue-data/bugreport.mozilla.firefox/mozilla_firefox_bugmeasures.csv");
+        CSVIssueReader reader = new CSVIssueReader();
+        ArrayList<FirefoxIssue> issues = reader.readCSV("/home/stephen/bug_buddy_jira_plugin/project-issue-data/bugreport.mozilla.firefox/mozilla_firefox_bugmeasures.csv");
         System.out.println(issues);
     }
 }
