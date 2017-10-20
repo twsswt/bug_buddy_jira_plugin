@@ -17,7 +17,7 @@ public class Main {
         System.out.println(ff);
 
         CSVIssueReader reader = new CSVIssueReader();
-        ArrayList<FirefoxIssue> issues = reader.readCSV("/home/stephen/bug_buddy_jira_plugin/project-issue-data/bugreport.mozilla.firefox/mozilla_firefox_bugmeasures.csv");
+        issues = reader.readCSV("/home/stephen/bug_buddy_jira_plugin/project-issue-data/bugreport.mozilla.firefox/mozilla_firefox_bugmeasures.csv");
         System.out.println(issues);
 
         Scraper s = new Scraper();

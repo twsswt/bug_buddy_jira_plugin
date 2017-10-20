@@ -15,8 +15,9 @@ public class Scraper {
         String issueURL = "https://bugzilla.mozilla.org/show_bug.cgi?ctype=xml&id=" + issue.getBugID();
         System.out.println(issueURL);
 
+        String xmlDocument = "";
+
         try {
-            String xmlDocument = "";
             String line;
             URL url = new URL(issueURL);
             InputStream stream = url.openStream();
@@ -35,13 +36,12 @@ public class Scraper {
             e.printStackTrace();
         }
 
+        return xmlDocument;
     }
 
     public void extractIssueComments(String xmlDocument) {
 
     }
-
-
 
 
 }
