@@ -1,2 +1,11 @@
 # Complition results
 jira-hello-world/myPlugin/target
+evaluation-harness/out
+
+# IDE stuff
+.idea
+*.iml
+
+# Libraries
+evaluation-harness/lib
+
