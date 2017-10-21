@@ -7,20 +7,19 @@ import java.util.ArrayList;
 
 public class Main {
 
-    public static ArrayList<FirefoxIssue> issues;
-
     public static void main(String[] args) {
-        System.out.println("Hello World!");
-        FirefoxIssue ff = new FirefoxIssue();
-        ff.setBugID(600);
 
-        System.out.println(ff);
+        ArrayList<FirefoxIssue> issues;
 
+        // Extract data from the Bug Database CSV File
         CSVIssueReader reader = new CSVIssueReader();
-        issues = reader.readCSV("/home/stephen/bug_buddy_jira_plugin/project-issue-data/bugreport.mozilla.firefox/mozilla_firefox_bugmeasures.csv");
+        issues = reader.readIssuesFromCSV("/home/stephen/bug_buddy_jira_plugin/project-issue-data/bugreport.mozilla.firefox/mozilla_firefox_bugmeasures.csv");
         System.out.println(issues);
 
+        // Get the comments for each bug
+        // Comments aren't provided in the Bug Database
         Scraper s = new Scraper();
-        s.getIssueXML(issues.get(0));
+        System.out.println(s.getIssueXML(issues.get(0)));
+
     }
 }

@@ -3,28 +3,33 @@ package scraper;
 import main.FirefoxIssue;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 
 public class CSVIssueReader {
 
-    public ArrayList<FirefoxIssue> readCSV(String filepath) {
+    /**
+     * readIssuesFromCSV will create a list of Issues from a CSV file
+     * @param filepath the location of the CSV file
+     * @return An ArrayList containing a list of Issues
+     */
+    public ArrayList<FirefoxIssue> readIssuesFromCSV(String filepath) {
 
-        ArrayList<FirefoxIssue> issues = new ArrayList<FirefoxIssue>();
+        ArrayList<FirefoxIssue> issues = new ArrayList<>();
+
+        // Open the CSV file for reading
         File f = new File(filepath);
-
         try (com.opencsv.CSVReader reader = new com.opencsv.CSVReader(new FileReader(f))) {
-            String[] tokens;
-            //Remove header
+
+            // Remove the headers from the CSV file
             reader.readNext();
 
+            // Create each issue
+            String[] tokens;
             while ((tokens = reader.readNext()) != null) {
                 issues.add(createIssue(tokens));
             }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -32,10 +37,14 @@ public class CSVIssueReader {
         return issues;
     }
 
-    public FirefoxIssue createIssue(String[] tokens) {
+    /**
+     * createIssue will create an issue from an array of tokens.
+     * @param tokens An array of strings containing the individual components of an issue
+     * @return A new FirefoxIssue created using the array of tokens
+     */
+    private FirefoxIssue createIssue(String[] tokens) {
         FirefoxIssue issue = new FirefoxIssue();
 
-        System.out.println(tokens[0]);
         issue.setBugID(Long.parseLong(tokens[0]));
         issue.setComponent(tokens[1]);
         issue.setReporterEmail(tokens[8]);
