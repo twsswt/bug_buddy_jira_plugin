@@ -19,7 +19,12 @@ public class Main {
         // Get the comments for each bug
         // Comments aren't provided in the Bug Database
         Scraper s = new Scraper();
-        System.out.println(s.getIssueXML(issues.get(0)));
+        for (FirefoxIssue issue: issues) {
+            ArrayList<String> comments = s.extractIssueComments(issue);
+            issue.setComments(comments);
+            System.out.println("Set issue " + issue.getBugID() + "!");
+            System.out.println(issue);
+        }
 
     }
 }
