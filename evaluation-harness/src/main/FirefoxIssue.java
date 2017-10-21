@@ -47,7 +47,15 @@ public class FirefoxIssue {
         this.assigneeEmail30Days = assigneeEmail30Days;
     }
 
+    @Override
     public String toString() {
-        return String.valueOf(bugID);
+        return "FirefoxIssue{" +
+                "bugID=" + bugID +
+                ", component='" + component + '\'' +
+                ", reporterEmail='" + reporterEmail + '\'' +
+                ", assigneeEmail='" + assigneeEmail + '\'' +
+                ", assigneeEmail30Days='" + assigneeEmail30Days + '\'' +
+                '}';
     }
+
 }
