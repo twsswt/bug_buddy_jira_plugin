@@ -16,18 +16,16 @@ public class CSVIssueReader {
         File f = new File(filepath);
 
         try (com.opencsv.CSVReader reader = new com.opencsv.CSVReader(new FileReader(f))) {
-            String [] tokens;
+            String[] tokens;
             //Remove header
             reader.readNext();
 
             while ((tokens = reader.readNext()) != null) {
                 issues.add(createIssue(tokens));
             }
-        }
-        catch (FileNotFoundException e) {
+        } catch (FileNotFoundException e) {
             e.printStackTrace();
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
 
