@@ -28,11 +28,14 @@ class Main {
         // Comments aren't provided in the Bug Database
         Scraper s = new Scraper();
         for (int i = 0; i < maxIssuesToDownload; i++) {
-            //s.getIssueXML(issues.get(i));
+            boolean downloaded = s.getIssueXML(issues.get(i));
+            if (downloaded) {
+                System.out.println("Downloaded:\t" + (i + 1) + "/" + maxIssuesToDownload);
+            } else {
+                System.out.println("Skipped:\t" + (i + 1) + "/" + maxIssuesToDownload);
+            }
             ArrayList<String> comments = s.extractIssueComments(issues.get(i));
             issues.get(i).setComments(comments);
-            System.out.println("Set issue " + issues.get(i).getBugID() + "!");
-            //System.out.println(issues.get(i));
         }
 
     }
