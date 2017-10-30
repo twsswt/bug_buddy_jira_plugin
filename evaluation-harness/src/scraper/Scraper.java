@@ -27,37 +27,42 @@ public class Scraper {
         StringBuilder xmlDocumentBuffer = new StringBuilder();
 
         File issueXMLFile = new File(outputFilename);
+
         if (!issueXMLFile.exists()) {
-            // Download the contents of the webpage
-            try {
-                URL url = new URL(issueURL);
-                InputStream stream = url.openStream();
-                BufferedReader br = new BufferedReader(new InputStreamReader(stream));
-
-                String line;
-                while ((line = br.readLine()) != null) {
-                    xmlDocumentBuffer.append(line);
-                    xmlDocumentBuffer.append("\n");
-                }
-                br.close();
-                stream.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            // Save it to file
-            try {
-                BufferedWriter writer = new BufferedWriter(new FileWriter(issueXMLFile));
-
-                writer.write(xmlDocumentBuffer.toString());
-                writer.close();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
+            downloadWebpageContents(issueURL, xmlDocumentBuffer);
+            saveXMLToFile(xmlDocumentBuffer, issueXMLFile);
             return true;
+        } else {
+            return false;
         }
-        return false;
+    }
+
+    private void saveXMLToFile(StringBuilder xmlDocumentBuffer, File issueXMLFile) {
+        try {
+            BufferedWriter writer = new BufferedWriter(new FileWriter(issueXMLFile));
+            writer.write(xmlDocumentBuffer.toString());
+            writer.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void downloadWebpageContents(String issueURL, StringBuilder xmlDocumentBuffer) {
+        try {
+            URL url = new URL(issueURL);
+            InputStream stream = url.openStream();
+            BufferedReader br = new BufferedReader(new InputStreamReader(stream));
+
+            String line;
+            while ((line = br.readLine()) != null) {
+                xmlDocumentBuffer.append(line);
+                xmlDocumentBuffer.append("\n");
+            }
+            br.close();
+            stream.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
