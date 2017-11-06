@@ -1,0 +1,18 @@
+{
+    "fields":{
+        "project":{
+            "key":"TEST"
+        },
+        "summary":"something's wrong",
+        "description":"longer description",
+        "issuetype":{
+            "id":"10000"
+        },
+        "assignee":{
+            "name":"homer@simpson.com"
+        },
+        "reporter":{
+            "name":"smithers@burns.com"
+        }
+    }
+}
