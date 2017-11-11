@@ -20,9 +20,9 @@ public class Scraper {
      * @param issue The issue which we want to get an XML version of
      * @return whether we needed to download the XML or not
      */
-    public boolean getIssueXML(FirefoxIssue issue) {
+    public boolean getIssueXML(FirefoxIssue issue, String xmlRootFolder) {
         String issueURL = "https://bugzilla.mozilla.org/show_bug.cgi?ctype=xml&id=" + issue.getBugID();
-        String outputFilename = "/home/stephen/bug_buddy_jira_plugin/project-issue-data/bugreport.mozilla.firefox/issueXML/" + issue.getBugID() + ".xml";
+        String outputFilename = xmlRootFolder + issue.getBugID() + ".xml";
 
         StringBuilder xmlDocumentBuffer = new StringBuilder();
 

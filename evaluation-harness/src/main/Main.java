@@ -5,7 +5,6 @@ import scraper.CSVIssueReader;
 import scraper.Scraper;
 
 import java.io.BufferedWriter;
-import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -16,17 +15,16 @@ class Main {
 
     public static void main(String[] args) {
 
-        extractMaxIssuesToProcessFromArguments(args);
+        processArguments(args);
 
         ArrayList<FirefoxIssue> issues = getIssueData();
 
         // Convert issues into JIRA classes
         JiraProject jiraProject = new JiraProject();
         Gson gson = new Gson();
-        String jiraProjectJsonFilename = "/home/stephen/bug_buddy_jira_plugin/project-issue-data/bugreport.mozilla.firefox/issueJSON/project.json";
+        String jiraProjectJsonFilename = "../project-issue-data/bugreport.mozilla.firefox/issueJSON/project.json";
 
         try {
-            File jiraProjectJsonFile = new File(jiraProjectJsonFilename);
             BufferedWriter writer = new BufferedWriter(new FileWriter(jiraProjectJsonFilename));
             writer.write(gson.toJson(jiraProject));
             writer.close();
@@ -35,18 +33,18 @@ class Main {
         }
 
 
-
-
     }
 
-    private static void extractMaxIssuesToProcessFromArguments(String[] args) {
-        if (args.length > 0) {
-            maxIssuesToProcess = Integer.parseInt(args[0]);
+    private static void processArguments(String[] args) {
+        if (args.length != 1) {
+            throw new IllegalArgumentException("Not Enough Arguments");
         }
+
+        maxIssuesToProcess = Integer.parseInt(args[0]);
     }
 
     private static void downloadIssueXMLIfRequired(Scraper s, FirefoxIssue issue, int current) {
-        boolean downloaded = s.getIssueXML(issue);
+        boolean downloaded = s.getIssueXML(issue, ("../project-issue-data/bugreport.mozilla.firefox/issueXML/"));
         if (downloaded) {
             System.out.println("Downloaded:\t" + (current + 1) + "/" + maxIssuesToProcess);
         } else {
@@ -58,7 +56,7 @@ class Main {
         // Extract issue data from the Bug Database CSV File
         ArrayList<FirefoxIssue> issues;
         CSVIssueReader reader = new CSVIssueReader();
-        issues = reader.readIssuesFromCSV("/home/stephen/bug_buddy_jira_plugin/project-issue-data/bugreport.mozilla.firefox/mozilla_firefox_bugmeasures.csv");
+        issues = reader.readIssuesFromCSV("../project-issue-data/bugreport.mozilla.firefox/mozilla_firefox_bugmeasures.csv");
 
         // Ensure we only process as many issues as actually exist
         if (issues.size() < maxIssuesToProcess) {
