@@ -5,6 +5,7 @@ import scraper.CSVIssueReader;
 import scraper.Scraper;
 
 import java.io.BufferedWriter;
+import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -54,9 +55,14 @@ class Main {
 
     private static ArrayList<FirefoxIssue> getIssueData() {
         // Extract issue data from the Bug Database CSV File
-        ArrayList<FirefoxIssue> issues;
         CSVIssueReader reader = new CSVIssueReader();
-        issues = reader.readIssuesFromCSV("../project-issue-data/bugreport.mozilla.firefox/mozilla_firefox_bugmeasures.csv");
+
+        ArrayList<FirefoxIssue> issues = new ArrayList<>();
+        try {
+            issues = reader.readIssuesFromCSV("../project-issue-data/bugreport.mozilla.firefox/mozilla_firefox_bugmeasures.csv");
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
 
         // Ensure we only process as many issues as actually exist
         if (issues.size() < maxIssuesToProcess) {

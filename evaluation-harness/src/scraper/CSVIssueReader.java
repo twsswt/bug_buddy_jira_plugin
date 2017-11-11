@@ -3,6 +3,7 @@ package scraper;
 import main.FirefoxIssue;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -14,12 +15,17 @@ public class CSVIssueReader {
      * @param filepath the location of the CSV file
      * @return An ArrayList containing a list of Issues
      */
-    public ArrayList<FirefoxIssue> readIssuesFromCSV(String filepath) {
+    public ArrayList<FirefoxIssue> readIssuesFromCSV(String filepath) throws FileNotFoundException {
 
         ArrayList<FirefoxIssue> issues = new ArrayList<>();
 
         // Open the CSV file for reading
         File f = new File(filepath);
+
+        if (!f.exists()) {
+            throw new FileNotFoundException();
+        }
+
         try (com.opencsv.CSVReader reader = new com.opencsv.CSVReader(new FileReader(f))) {
 
             // Remove the headers from the CSV file
