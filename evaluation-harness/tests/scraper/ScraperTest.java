@@ -2,14 +2,19 @@ package scraper;
 
 import main.FirefoxIssue;
 import org.junit.After;
+import org.junit.Test;
 
 
 import java.io.File;
 import java.nio.file.Files;
+import java.util.ArrayList;
 
 import static org.junit.Assert.*;
 
 public class ScraperTest {
+    @Test
+    public void downloadWebpageContents() throws Exception {
+    }
 
     // We want this function to run very quickly if we don't have to redownload the xml file
     @org.junit.Test(timeout=100)
@@ -38,7 +43,20 @@ public class ScraperTest {
     }
 
     @org.junit.Test
-    public void extractIssueComments() throws Exception {
+    public void ensureSaveXMLToFileDoesntThrowException() throws Exception {
+        Scraper s = new Scraper();
+        s.saveXMLToFile("<head></head>", new File("tests/test-xml-files/212778.xml"));
+    }
+
+    @org.junit.Test
+    public void ensureExtractIssueCommentsExtractsAllComments() throws Exception {
+        Scraper s = new Scraper();
+        FirefoxIssue testIssue = new FirefoxIssue();
+        testIssue.setBugID(212779);
+
+        ArrayList<String> comments = s.extractIssueComments(testIssue);
+        int expectedNumComments = 87; // Manual counting is a pain
+        assertEquals(expectedNumComments, comments.size());
     }
 
     @After

@@ -24,45 +24,50 @@ public class Scraper {
         String issueURL = "https://bugzilla.mozilla.org/show_bug.cgi?ctype=xml&id=" + issue.getBugID();
         String outputFilename = xmlRootFolder + issue.getBugID() + ".xml";
 
-        StringBuilder xmlDocumentBuffer = new StringBuilder();
-
         File issueXMLFile = new File(outputFilename);
 
         if (!issueXMLFile.exists()) {
-            downloadWebpageContents(issueURL, xmlDocumentBuffer);
-            saveXMLToFile(xmlDocumentBuffer, issueXMLFile);
+            StringBuilder xmlDocumentBuffer = new StringBuilder();
+            String xmlDocument = downloadWebpageContents(issueURL, xmlDocumentBuffer);
+            saveXMLToFile(xmlDocument, issueXMLFile);
             return true;
         } else {
             return false;
         }
     }
 
-    private void saveXMLToFile(StringBuilder xmlDocumentBuffer, File issueXMLFile) {
+    protected void saveXMLToFile(String xmlDocument, File issueXMLFile) {
         try {
             BufferedWriter writer = new BufferedWriter(new FileWriter(issueXMLFile));
-            writer.write(xmlDocumentBuffer.toString());
+            writer.write(xmlDocument);
             writer.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    private void downloadWebpageContents(String issueURL, StringBuilder xmlDocumentBuffer) {
+    protected String downloadWebpageContents(String issueURL, StringBuilder xmlDocumentBuffer) {
         try {
+            // Open the webpage for reading
             URL url = new URL(issueURL);
             InputStream stream = url.openStream();
             BufferedReader br = new BufferedReader(new InputStreamReader(stream));
 
+            // Read the webpage line by line
             String line;
             while ((line = br.readLine()) != null) {
                 xmlDocumentBuffer.append(line);
                 xmlDocumentBuffer.append("\n");
             }
+
+            // Close resources
             br.close();
             stream.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        return xmlDocumentBuffer.toString();
     }
 
     /**
@@ -75,7 +80,7 @@ public class Scraper {
     public ArrayList<String> extractIssueComments(FirefoxIssue issue) {
 
         ArrayList<String> comments = new ArrayList<>();
-        String issueFilename = "/home/stephen/bug_buddy_jira_plugin/project-issue-data/bugreport.mozilla.firefox/issueXML/" + issue.getBugID() + ".xml";
+        String issueFilename = "../project-issue-data/bugreport.mozilla.firefox/issueXML/" + issue.getBugID() + ".xml";
 
         try {
             DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
