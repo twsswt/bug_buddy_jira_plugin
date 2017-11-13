@@ -8,6 +8,7 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 public class ConverterTest {
+
     @Test
     public void TestConvertJiraProjectToJiraJSONDefaultProject() throws Exception {
         JiraProject jiraProject = new JiraProject();
@@ -74,6 +75,14 @@ public class ConverterTest {
         System.out.println("Expected Json: " + expectedJson);
 
         assertEquals(expectedJson, actualJson);
+    }
+
+    @Test
+    public void TestConstructorSetsProjectKey() throws Exception {
+        String projectKey = "PSD";
+        Converter c = new Converter(projectKey);
+
+        assertEquals(projectKey, c.getProjectKey());
 
     }
 }
