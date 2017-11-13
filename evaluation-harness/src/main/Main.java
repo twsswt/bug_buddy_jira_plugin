@@ -1,6 +1,7 @@
 package main;
 
 import com.google.gson.Gson;
+import converter.Converter;
 import scraper.CSVIssueReader;
 import scraper.Scraper;
 
@@ -20,14 +21,16 @@ class Main {
 
         ArrayList<FirefoxIssue> issues = getIssueData();
 
+        Converter converter = new Converter();
+
         // Convert issues into JIRA classes
         JiraProject jiraProject = new JiraProject();
-        Gson gson = new Gson();
+        String jiraProjectJson = converter.convertJiraProjectToJiraJSON(jiraProject);
         String jiraProjectJsonFilename = "../project-issue-data/bugreport.mozilla.firefox/issueJSON/project.json";
 
         try {
             BufferedWriter writer = new BufferedWriter(new FileWriter(jiraProjectJsonFilename));
-            writer.write(gson.toJson(jiraProject));
+            writer.write(jiraProjectJson);
             writer.close();
         } catch (IOException e) {
             e.printStackTrace();
