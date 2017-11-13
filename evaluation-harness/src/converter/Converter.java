@@ -51,7 +51,7 @@ public class Converter {
                 "}\n" +
                 "}\n" +
                 "}";
-        
+
         return s;
     }
 

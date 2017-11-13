@@ -1,6 +1,5 @@
 package main;
 
-import com.google.gson.Gson;
 import converter.Converter;
 import scraper.CSVIssueReader;
 import scraper.Scraper;
