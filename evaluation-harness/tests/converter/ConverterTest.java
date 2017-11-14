@@ -71,9 +71,6 @@ public class ConverterTest {
                 "}";
         String actualJson = c.convertJiraIssueToJiraJSON(ji);
 
-        System.out.println("Actual Json: " + actualJson);
-        System.out.println("Expected Json: " + expectedJson);
-
         assertEquals(expectedJson, actualJson);
     }
 
@@ -84,5 +81,20 @@ public class ConverterTest {
 
         assertEquals(projectKey, c.getProjectKey());
 
+    }
+
+    @Test
+    public void TestConvertEmailAddressToJiraUserJson() throws Exception {
+        Converter c = new Converter();
+
+        String expectedJson = "{\n" +
+                "\"name\":\"sbrown1992@gmail.com\"\n" +
+                "\"password\":\"sbrown1992@gmail.com\"\n" +
+                "\"emailAddress\":\"sbrown1992@gmail.com\"\n" +
+                "\"displayName\":\"sbrown1992@gmail.com\"\n" +
+                "}";
+        String actualJson = c.convertEmailAddressToJiraUser("sbrown1992@gmail.com");
+
+        assertEquals(expectedJson, actualJson);
     }
 }

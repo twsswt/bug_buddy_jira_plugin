@@ -19,7 +19,7 @@ class Main {
         processArguments(args);
 
         ArrayList<FirefoxIssue> firefoxIssues = getIssueData();
-        ArrayList<JiraIssue>
+        ArrayList<JiraIssue> jiraIssues = new ArrayList<>();
 
         Converter converter = new Converter();
 

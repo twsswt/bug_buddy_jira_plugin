@@ -58,6 +58,15 @@ public class Converter {
     public String convertJiraProjectToJiraJSON(JiraProject jiraProject) {
         Gson gson = new Gson();
         return gson.toJson(jiraProject);
+    }
 
+    public String convertEmailAddressToJiraUser(String email) {
+        String s = "{\n" +
+                "\"name\":\"" + email + "\"\n" +
+                "\"password\":\"" + email + "\"\n" +
+                "\"emailAddress\":\"" + email + "\"\n" +
+                "\"displayName\":\"" + email + "\"\n" +
+                "}";
+        return s;
     }
 }
