@@ -18,11 +18,12 @@ class Main {
 
         processArguments(args);
 
-        ArrayList<FirefoxIssue> issues = getIssueData();
+        ArrayList<FirefoxIssue> firefoxIssues = getIssueData();
+        ArrayList<JiraIssue>
 
         Converter converter = new Converter();
 
-        // Convert issues into JIRA classes
+        // Create a JIRA Project json, and write to file
         JiraProject jiraProject = new JiraProject();
         String jiraProjectJson = converter.convertJiraProjectToJiraJSON(jiraProject);
         String jiraProjectJsonFilename = "../project-issue-data/bugreport.mozilla.firefox/issueJSON/project.json";
@@ -34,7 +35,6 @@ class Main {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
 
     }
 
