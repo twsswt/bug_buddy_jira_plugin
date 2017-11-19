@@ -88,9 +88,9 @@ public class ConverterTest {
         Converter c = new Converter();
 
         String expectedJson = "{\n" +
-                "\"name\":\"sbrown1992@gmail.com\"\n" +
-                "\"password\":\"sbrown1992@gmail.com\"\n" +
-                "\"emailAddress\":\"sbrown1992@gmail.com\"\n" +
+                "\"name\":\"sbrown1992@gmail.com\",\n" +
+                "\"password\":\"sbrown1992@gmail.com\",\n" +
+                "\"emailAddress\":\"sbrown1992@gmail.com\",\n" +
                 "\"displayName\":\"sbrown1992@gmail.com\"\n" +
                 "}";
         String actualJson = c.convertEmailAddressToJiraUser("sbrown1992@gmail.com");

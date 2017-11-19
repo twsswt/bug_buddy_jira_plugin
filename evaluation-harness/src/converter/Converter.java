@@ -62,9 +62,9 @@ public class Converter {
 
     public String convertEmailAddressToJiraUser(String email) {
         String s = "{\n" +
-                "\"name\":\"" + email + "\"\n" +
-                "\"password\":\"" + email + "\"\n" +
-                "\"emailAddress\":\"" + email + "\"\n" +
+                "\"name\":\"" + email + "\",\n" +
+                "\"password\":\"" + email + "\",\n" +
+                "\"emailAddress\":\"" + email + "\",\n" +
                 "\"displayName\":\"" + email + "\"\n" +
                 "}";
         return s;
