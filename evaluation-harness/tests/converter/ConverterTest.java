@@ -17,7 +17,7 @@ public class ConverterTest {
 
         String actualJson = converter.convertJiraProjectToJiraJSON(jiraProject);
 
-        String expectedJson = "{\"key\":\"FRFX\",\"name\":\"Firefox Issues\",\"projectTypeKey\":\"business\",\"projectTemplateKey\":\"com.atlassian.jira-core-project-templates:jira-core-project-management\",\"description\":\"Firefox data set for recommendations\",\"lead\":\"admin\",\"url\":\"https://atlassian.com\",\"assigneeType\":\"PROJECT_LEAD\",\"avatarID\":10200,\"permissionScheme\":0,\"notificationScheme\":10000}";
+        String expectedJson = "{\"key\":\"FRFX\",\"name\":\"Firefox Issues\",\"projectTypeKey\":\"business\",\"projectTemplateKey\":\"com.atlassian.jira-core-project-templates:jira-core-project-management\",\"description\":\"Firefox data set for recommendations\",\"lead\":\"admin\",\"url\":\"https://atlassian.com\",\"assigneeType\":\"PROJECT_LEAD\",\"avatarId\":10200,\"permissionScheme\":0,\"notificationScheme\":10000}";
 
         assertEquals(expectedJson, actualJson);
     }

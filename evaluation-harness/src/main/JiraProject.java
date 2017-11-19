@@ -9,7 +9,7 @@ public class JiraProject {
     private String lead;
     private String url;
     private String assigneeType;
-    private int avatarID;
+    private int avatarId;
     private int permissionScheme;
     private int notificationScheme;
 
@@ -22,7 +22,7 @@ public class JiraProject {
         lead = "admin";
         url = "https://atlassian.com";
         assigneeType = "PROJECT_LEAD";
-        avatarID = 10200;
+        avatarId = 10200;
         permissionScheme = 0;
         notificationScheme = 10000;
     }
