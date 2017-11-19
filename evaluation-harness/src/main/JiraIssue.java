@@ -9,9 +9,9 @@ public class JiraIssue {
     private String reporterName;
     private String assigneeName;
 
-    public JiraIssue() {
+    public JiraIssue(String firefoxBugID) {
         projectKey = "";
-        summary = "";
+        summary = firefoxBugID;
         description = "";
         issueTypeID = "";
         reporterName = "";

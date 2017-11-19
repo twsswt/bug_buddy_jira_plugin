@@ -40,14 +40,14 @@ public class ConverterTest {
         assertEquals("10000", ji.getIssueTypeID());
         assertEquals(c.getProjectKey(), ji.getProjectKey());
         assertEquals("tim.storer@gla.ac.uk", ji.getReporterName());
-        assertEquals("", ji.getSummary());
+        assertEquals("666", ji.getSummary());
     }
 
     @Test
     public void TestConvertJiraIssueToJiraJSON() throws Exception {
         Converter c = new Converter();
 
-        JiraIssue ji = new JiraIssue();
+        JiraIssue ji = new JiraIssue("666");
         ji.setAssigneeName("1106679b@student.gla.ac.uk");
         ji.setIssueTypeID("10000");
         ji.setProjectKey("FRFX");
@@ -58,6 +58,7 @@ public class ConverterTest {
                 "\"project\":{\n" +
                 "\"key\":\"FRFX\"\n" +
                 "},\n" +
+                "\"summary\": \"666\",\n" +
                 "\"issuetype\":{\n" +
                 "\"id\":\"10000\"\n" +
                 "},\n" +

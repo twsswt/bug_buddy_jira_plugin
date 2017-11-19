@@ -25,7 +25,7 @@ public class Converter {
     }
 
     public JiraIssue convertFirefoxIssueToJiraIssue(FirefoxIssue firefoxIssue) {
-        JiraIssue ji = new JiraIssue();
+        JiraIssue ji = new JiraIssue(String.valueOf(firefoxIssue.getBugID()));
         ji.setProjectKey(projectKey);
         ji.setAssigneeName(firefoxIssue.getAssigneeEmail30Days());
         ji.setIssueTypeID("10000");
@@ -40,6 +40,7 @@ public class Converter {
                 "\"project\":{\n" +
                 "\"key\":\"" + projectKey + "\"\n" +
                 "},\n" +
+                "\"summary\": \"" + jiraIssue.getSummary() + "\",\n" +
                 "\"issuetype\":{\n" +
                 "\"id\":\"" + jiraIssue.getIssueTypeID() + "\"\n" +
                 "},\n" +
