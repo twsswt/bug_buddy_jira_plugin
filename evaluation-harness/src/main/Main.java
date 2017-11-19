@@ -30,13 +30,7 @@ class Main {
         String jiraProjectJson = converter.convertJiraProjectToJiraJSON(jiraProject);
         String jiraProjectJsonFilename = issueJSONlocation + "project.json";
 
-        try {
-            BufferedWriter writer = new BufferedWriter(new FileWriter(jiraProjectJsonFilename));
-            writer.write(jiraProjectJson);
-            writer.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        writeJSONToFile(jiraProjectJson, jiraProjectJsonFilename);
 
         // Get every unique email in the firefox issues dataset
         Set<String> userEmails = new HashSet<>();
@@ -51,13 +45,8 @@ class Main {
             String userJson = converter.convertEmailAddressToJiraUser(email);
             String userJsonFilename = issueJSONlocation + "users/" + email + ".json";
 
-            try {
-                BufferedWriter writer = new BufferedWriter(new FileWriter(userJsonFilename));
-                writer.write(userJson);
-                writer.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            writeJSONToFile(userJson, userJsonFilename);
+
         }
 
         // Create jira json from every issue, and write to a file
@@ -66,13 +55,7 @@ class Main {
             String issueJson = converter.convertJiraIssueToJiraJSON(jiraIssue);
             String issueJsonFilename = issueJSONlocation + "issues/" + firefoxIssue.getBugID() + ".json";
 
-            try {
-                BufferedWriter writer = new BufferedWriter(new FileWriter(issueJsonFilename));
-                writer.write(issueJson);
-                writer.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            writeJSONToFile(issueJson, issueJsonFilename);
         }
 
         // TODO convert each issues comments to Jira Json
@@ -182,5 +165,15 @@ class Main {
         }
 
         return issues;
+    }
+
+    private static void writeJSONToFile(String JSON, String filename) {
+        try {
+            BufferedWriter writer = new BufferedWriter(new FileWriter(filename));
+            writer.write(JSON);
+            writer.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
