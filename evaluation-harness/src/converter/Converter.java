@@ -35,7 +35,8 @@ public class Converter {
     }
 
     public String convertJiraIssueToJiraJSON(JiraIssue jiraIssue) {
-        String s = "{\n" +
+
+        return "{\n" +
                 "\"fields\":{\n" +
                 "\"project\":{\n" +
                 "\"key\":\"" + projectKey + "\"\n" +
@@ -52,8 +53,6 @@ public class Converter {
                 "}\n" +
                 "}\n" +
                 "}";
-
-        return s;
     }
 
     public String convertJiraProjectToJiraJSON(JiraProject jiraProject) {
@@ -62,12 +61,11 @@ public class Converter {
     }
 
     public String convertEmailAddressToJiraUser(String email) {
-        String s = "{\n" +
+        return "{\n" +
                 "\"name\":\"" + email + "\",\n" +
                 "\"password\":\"" + email + "\",\n" +
                 "\"emailAddress\":\"" + email + "\",\n" +
                 "\"displayName\":\"" + email + "\"\n" +
                 "}";
-        return s;
     }
 }

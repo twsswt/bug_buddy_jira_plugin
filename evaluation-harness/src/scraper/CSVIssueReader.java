@@ -12,6 +12,7 @@ public class CSVIssueReader {
 
     /**
      * readIssuesFromCSV will create a list of Issues from a CSV file
+     *
      * @param filepath the location of the CSV file
      * @return An ArrayList containing a list of Issues
      */
@@ -45,6 +46,7 @@ public class CSVIssueReader {
 
     /**
      * createIssue will create an issue from an array of tokens.
+     *
      * @param tokens An array of strings containing the individual components of an issue
      * @return A new FirefoxIssue created using the array of tokens
      */

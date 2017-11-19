@@ -19,7 +19,6 @@ class Main {
         processArguments(args);
 
         ArrayList<FirefoxIssue> firefoxIssues = getIssueData();
-        ArrayList<JiraIssue> jiraIssues = new ArrayList<>();
 
         String issueJSONlocation = "../project-issue-data/bugreport.mozilla.firefox/issueJSON/";
 
@@ -34,14 +33,14 @@ class Main {
 
         // Get every unique email in the firefox issues dataset
         Set<String> userEmails = new HashSet<>();
-        for (FirefoxIssue issue: firefoxIssues) {
+        for (FirefoxIssue issue : firefoxIssues) {
             userEmails.add(issue.getAssigneeEmail());
             userEmails.add(issue.getAssigneeEmail30Days());
             userEmails.add(issue.getReporterEmail());
         }
 
         // Create Jira users from each email address, and write to a file
-        for (String email: userEmails) {
+        for (String email : userEmails) {
             String userJson = converter.convertEmailAddressToJiraUser(email);
             String userJsonFilename = issueJSONlocation + "users/" + email + ".json";
 
@@ -50,7 +49,7 @@ class Main {
         }
 
         // Create jira json from every issue, and write to a file
-        for (FirefoxIssue firefoxIssue: firefoxIssues) {
+        for (FirefoxIssue firefoxIssue : firefoxIssues) {
             JiraIssue jiraIssue = converter.convertFirefoxIssueToJiraIssue(firefoxIssue);
             String issueJson = converter.convertJiraIssueToJiraJSON(jiraIssue);
             String issueJsonFilename = issueJSONlocation + "issues/" + firefoxIssue.getBugID() + ".json";
@@ -82,7 +81,7 @@ class Main {
         }
 
         try {
-            for (String email: userEmails) {
+            for (String email : userEmails) {
                 String fullCurlCommand = basicCurlCommand1 + "users/" + email + ".json" + basicCurlCommand2 + "user";
                 System.out.println(fullCurlCommand);
                 Process p = Runtime.getRuntime().exec(fullCurlCommand);
@@ -100,7 +99,7 @@ class Main {
         }
 
         try {
-            for (FirefoxIssue firefoxIssue: firefoxIssues) {
+            for (FirefoxIssue firefoxIssue : firefoxIssues) {
                 String fullCurlCommand = basicCurlCommand1 + "issues/" + firefoxIssue.getBugID() + ".json" + basicCurlCommand2 + "issue";
                 System.out.println(fullCurlCommand);
                 Process p = Runtime.getRuntime().exec(fullCurlCommand);

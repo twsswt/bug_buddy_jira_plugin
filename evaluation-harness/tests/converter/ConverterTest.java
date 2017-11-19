@@ -5,7 +5,7 @@ import main.JiraIssue;
 import main.JiraProject;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 public class ConverterTest {
 
@@ -53,7 +53,7 @@ public class ConverterTest {
         ji.setProjectKey("FRFX");
         ji.setReporterName("tim.storer@gla.ac.uk");
 
-        String expectedJson =  "{\n" +
+        String expectedJson = "{\n" +
                 "\"fields\":{\n" +
                 "\"project\":{\n" +
                 "\"key\":\"FRFX\"\n" +

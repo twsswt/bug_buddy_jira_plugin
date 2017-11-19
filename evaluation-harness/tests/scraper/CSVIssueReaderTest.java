@@ -4,10 +4,9 @@ import main.FirefoxIssue;
 import org.junit.Test;
 
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.ArrayList;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 public class CSVIssueReaderTest {
     @Test
@@ -26,7 +25,7 @@ public class CSVIssueReaderTest {
         assertEquals(expectedIssue.toString(), issues.get(0).toString());
     }
 
-    @Test(expected= FileNotFoundException.class)
+    @Test(expected = FileNotFoundException.class)
     public void ensureReadIssuesFromCSVThrowsExceptionWhenFileDoesntExist() throws Exception {
         CSVIssueReader reader = new CSVIssueReader();
 

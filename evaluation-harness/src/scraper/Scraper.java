@@ -36,7 +36,7 @@ public class Scraper {
         }
     }
 
-    protected void saveXMLToFile(String xmlDocument, File issueXMLFile) {
+    void saveXMLToFile(String xmlDocument, File issueXMLFile) {
         try {
             BufferedWriter writer = new BufferedWriter(new FileWriter(issueXMLFile));
             writer.write(xmlDocument);
@@ -46,7 +46,7 @@ public class Scraper {
         }
     }
 
-    protected String downloadWebpageContents(String issueURL, StringBuilder xmlDocumentBuffer) {
+    private String downloadWebpageContents(String issueURL, StringBuilder xmlDocumentBuffer) {
         try {
             // Open the webpage for reading
             URL url = new URL(issueURL);
