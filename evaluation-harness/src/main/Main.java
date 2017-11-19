@@ -9,6 +9,9 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 class Main {
 
@@ -36,6 +39,27 @@ class Main {
             e.printStackTrace();
         }
 
+        // Get every unique email in the firefox issues dataset
+        Set<String> userEmails = new HashSet<>();
+        for (FirefoxIssue issue: firefoxIssues) {
+            userEmails.add(issue.getAssigneeEmail());
+            userEmails.add(issue.getAssigneeEmail30Days());
+            userEmails.add(issue.getReporterEmail());
+        }
+
+        // Create Jira users from each email address, and write to a file
+        for (String email: userEmails) {
+            String userJson = converter.convertEmailAddressToJiraUser(email);
+            String userJsonFilename = "../project-issue-data/bugreport.mozilla.firefox/issueJSON/users/" + email + ".json";
+
+            try {
+                BufferedWriter writer = new BufferedWriter(new FileWriter(userJsonFilename));
+                writer.write(userJson);
+                writer.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     private static void processArguments(String[] args) {
@@ -59,17 +83,18 @@ class Main {
         // Extract issue data from the Bug Database CSV File
         CSVIssueReader reader = new CSVIssueReader();
 
-        ArrayList<FirefoxIssue> issues = new ArrayList<>();
+        List<FirefoxIssue> allIssues = new ArrayList<>();
         try {
-            issues = reader.readIssuesFromCSV("../project-issue-data/bugreport.mozilla.firefox/mozilla_firefox_bugmeasures.csv");
+            allIssues = reader.readIssuesFromCSV("../project-issue-data/bugreport.mozilla.firefox/mozilla_firefox_bugmeasures.csv");
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
 
         // Ensure we only process as many issues as actually exist
-        if (issues.size() < maxIssuesToProcess) {
-            maxIssuesToProcess = issues.size();
+        if (allIssues.size() < maxIssuesToProcess) {
+            maxIssuesToProcess = allIssues.size();
         }
+        ArrayList<FirefoxIssue> issues = new ArrayList<>(allIssues.subList(0, maxIssuesToProcess));
 
         // Get the comments for each issue, since they
         // aren't provided in the issue data CSV
