@@ -92,11 +92,11 @@ public class JiraProject {
     }
 
     public int getAvatarID() {
-        return avatarID;
+        return avatarId;
     }
 
     public void setAvatarID(int avatarID) {
-        this.avatarID = avatarID;
+        this.avatarId = avatarID;
     }
 
     public int getPermissionScheme() {
