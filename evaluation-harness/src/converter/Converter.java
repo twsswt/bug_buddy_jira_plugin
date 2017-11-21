@@ -68,4 +68,14 @@ public class Converter {
                 "\"displayName\":\"" + email + "\"\n" +
                 "}";
     }
+
+    public String convertCommentToJiraJSON(String comment, String issueID) {
+        return "{\n" +
+                "\"body\":\"" + comment + "\"\n" +
+                //"\"visibility\":{\n" +
+                //"\"type\":\"role\",\n" +
+                //"\"value\":\"Administrators\"\n" +
+                //"}\n" +
+                "}";
+    }
 }

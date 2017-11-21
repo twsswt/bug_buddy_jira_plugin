@@ -57,65 +57,35 @@ class Main {
             writeJSONToFile(issueJson, issueJsonFilename);
         }
 
-        // TODO convert each issues comments to Jira Json
+
 
         // Post the project, then all users, then all issues to Jira
         String basicCurlCommand1 = "curl -D- -u admin:admin -X POST --data @" + issueJSONlocation;
         String basicCurlCommand2 = " -H Content-Type:application/json http://localhost:2990/jira/rest/api/2/";
-        try {
-            String fullCurlCommand = basicCurlCommand1 + "project.json" + basicCurlCommand2 + "project";
-            System.out.println(fullCurlCommand);
-            Process p = Runtime.getRuntime().exec(fullCurlCommand);
-            p.waitFor();
 
-            InputStream stdout = p.getInputStream();
-            BufferedReader reader = new BufferedReader(new InputStreamReader(stdout));
-            String line;
-            while ((line = reader.readLine()) != null) {
-                System.out.println(line);
-            }
-
-
-        } catch (Exception e) {
-            e.printStackTrace();
+        sendGeneralCurlCommand(basicCurlCommand1 + "project.json" + basicCurlCommand2 + "project");
+        for (String email : userEmails) {
+            sendGeneralCurlCommand(basicCurlCommand1 + "users/" + email + ".json" + basicCurlCommand2 + "user");
         }
 
-        try {
-            for (String email : userEmails) {
-                String fullCurlCommand = basicCurlCommand1 + "users/" + email + ".json" + basicCurlCommand2 + "user";
-                System.out.println(fullCurlCommand);
-                Process p = Runtime.getRuntime().exec(fullCurlCommand);
-                p.waitFor();
+        for (FirefoxIssue firefoxIssue : firefoxIssues) {
+            String issueID = sendAddIssueCurlCommand(basicCurlCommand1 + "issues/" + firefoxIssue.getBugID() + ".json" + basicCurlCommand2 + "issue");
 
-                InputStream stdout = p.getInputStream();
-                BufferedReader reader = new BufferedReader(new InputStreamReader(stdout));
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    System.out.println(line);
-                }
+            ArrayList<String> comments = firefoxIssue.getComments();
+            for (int i = 0; i < comments.size(); i++) {
+                String comment = comments.get(i);
+
+                // Convert each comment to JSON
+                String commentJson = converter.convertCommentToJiraJSON(comment, issueID);
+                String commentJsonFilename = issueJSONlocation + "comments/" + issueID + "-" + i + ".json";
+                writeJSONToFile(commentJson, commentJsonFilename);
+
+                // Post to Jira
+                sendGeneralCurlCommand(basicCurlCommand1 + "comments/" + issueID + "-" + i + ".json" + basicCurlCommand2 + "issue/" + issueID + "/comment");
             }
-        } catch (Exception e) {
-            e.printStackTrace();
         }
 
-        try {
-            for (FirefoxIssue firefoxIssue : firefoxIssues) {
-                String fullCurlCommand = basicCurlCommand1 + "issues/" + firefoxIssue.getBugID() + ".json" + basicCurlCommand2 + "issue";
-                System.out.println(fullCurlCommand);
-                Process p = Runtime.getRuntime().exec(fullCurlCommand);
-                p.waitFor();
 
-                InputStream stdout = p.getInputStream();
-                BufferedReader reader = new BufferedReader(new InputStreamReader(stdout));
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    System.out.println(line);
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        // TODO post all issue comments to JIRA
     }
 
     private static void processArguments(String[] args) {
@@ -175,4 +145,59 @@ class Main {
             e.printStackTrace();
         }
     }
+
+    private static void sendGeneralCurlCommand(String curlCommand) {
+        try {
+            System.out.println(curlCommand);
+            Process p = Runtime.getRuntime().exec(curlCommand);
+            p.waitFor();
+
+            InputStream stdout = p.getInputStream();
+            BufferedReader reader = new BufferedReader(new InputStreamReader(stdout));
+            String line;
+            while ((line = reader.readLine()) != null) {
+                System.out.println(line);
+            }
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static String sendAddIssueCurlCommand(String curlCommand) {
+        String successJSON = "";
+        try {
+            System.out.println(curlCommand);
+            Process p = Runtime.getRuntime().exec(curlCommand);
+            p.waitFor();
+
+            InputStream stdout = p.getInputStream();
+            BufferedReader reader = new BufferedReader(new InputStreamReader(stdout));
+            String line;
+            while ((line = reader.readLine()) != null) {
+                successJSON = line;
+            }
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        String issueID = extractIssueIDFromSuccessJSON(successJSON);
+        System.out.println("IssueID is:" + issueID);
+        return issueID;
+    }
+
+    private static String extractIssueIDFromSuccessJSON(String successJSON) {
+        System.out.println(successJSON);
+        String[] JSONComponents = successJSON.split(",");
+        String[] idComponents = JSONComponents[0].split(":");
+        String id = idComponents[1];
+        id = id.replace("\"", "");
+
+        return id;
+    }
+
+
 }
+
