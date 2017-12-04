@@ -24,7 +24,11 @@ public class Sender {
     public Sender(String jiraIP, String jiraPort) {
         this.jiraIP = jiraIP;
         this.jiraPort = jiraPort;
-        this.jiraAPILocation = "http://" + jiraIP + ":" + jiraPort + "/jira/rest/api/2/";
+        updateJiraAPILocation();
+    }
+
+    public void updateJiraAPILocation() {
+        this.jiraAPILocation = "http://" + this.jiraIP + ":" + jiraPort + "/jira/rest/api/2/";
     }
 
     public void setIssueJSONLocation(String issueJSONLocation) {
@@ -49,5 +53,40 @@ public class Sender {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public String sendPostCommandExtractIssueID(String filename, String apiSection) {
+        String successJSON = "";
+        try {
+            String curlCommand = CURL_POST_PREFIX + issueJSONLocation + filename + CURL_POST_MIDFIX + apiSection;
+
+            System.out.println(curlCommand);
+            Process p = Runtime.getRuntime().exec(curlCommand);
+            p.waitFor();
+
+            InputStream stdout = p.getInputStream();
+            BufferedReader reader = new BufferedReader(new InputStreamReader(stdout));
+            String line;
+            while ((line = reader.readLine()) != null) {
+                successJSON = line;
+            }
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        String issueID = extractIssueIDFromSuccessJSON(successJSON);
+        System.out.println("IssueID is:" + issueID);
+        return issueID;
+    }
+
+    private static String extractIssueIDFromSuccessJSON(String successJSON) {
+        System.out.println(successJSON);
+        String[] JSONComponents = successJSON.split(",");
+        String[] idComponents = JSONComponents[0].split(":");
+        String id = idComponents[1];
+        id = id.replace("\"", "");
+
+        return id;
     }
 }

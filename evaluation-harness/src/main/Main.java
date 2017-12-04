@@ -64,9 +64,6 @@ class Main {
 
 
         // Post the project, then all users, then all issues to Jira
-        String curlPostPrefix = "curl -D- -u admin:admin -X POST --data @" + issueJSONlocation;
-        String curlPostMidfix = " -H Content-Type:application/json http://localhost:2990/jira/rest/api/2/";
-
         Sender sender = new Sender();
         sender.setIssueJSONLocation(issueJSONlocation);
         sender.sendPostCommand("project.json", "project");
@@ -77,7 +74,7 @@ class Main {
         }
 
         for (FirefoxIssue firefoxIssue : firefoxIssues) {
-            String issueID = sendAddIssueCurlCommand(curlPostPrefix + "issues/" + firefoxIssue.getBugID() + ".json" + curlPostMidfix + "issue");
+            String issueID = sender.sendPostCommandExtractIssueID("issues/" + firefoxIssue.getBugID() + ".json", "issue");
 
             ArrayList<String> comments = firefoxIssue.getComments();
             for (int i = 0; i < comments.size(); i++) {
@@ -153,40 +150,5 @@ class Main {
             e.printStackTrace();
         }
     }
-
-    private static String sendAddIssueCurlCommand(String curlCommand) {
-        String successJSON = "";
-        try {
-            System.out.println(curlCommand);
-            Process p = Runtime.getRuntime().exec(curlCommand);
-            p.waitFor();
-
-            InputStream stdout = p.getInputStream();
-            BufferedReader reader = new BufferedReader(new InputStreamReader(stdout));
-            String line;
-            while ((line = reader.readLine()) != null) {
-                successJSON = line;
-            }
-
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        String issueID = extractIssueIDFromSuccessJSON(successJSON);
-        System.out.println("IssueID is:" + issueID);
-        return issueID;
-    }
-
-    private static String extractIssueIDFromSuccessJSON(String successJSON) {
-        System.out.println(successJSON);
-        String[] JSONComponents = successJSON.split(",");
-        String[] idComponents = JSONComponents[0].split(":");
-        String id = idComponents[1];
-        id = id.replace("\"", "");
-
-        return id;
-    }
-
-
 }
 
