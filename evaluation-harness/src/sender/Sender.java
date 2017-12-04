@@ -27,6 +27,16 @@ public class Sender {
         updateJiraAPILocation();
     }
 
+    private static String extractIssueIDFromSuccessJSON(String successJSON) {
+        System.out.println(successJSON);
+        String[] JSONComponents = successJSON.split(",");
+        String[] idComponents = JSONComponents[0].split(":");
+        String id = idComponents[1];
+        id = id.replace("\"", "");
+
+        return id;
+    }
+
     public void updateJiraAPILocation() {
         this.jiraAPILocation = "http://" + this.jiraIP + ":" + jiraPort + "/jira/rest/api/2/";
     }
@@ -78,15 +88,5 @@ public class Sender {
         String issueID = extractIssueIDFromSuccessJSON(successJSON);
         System.out.println("IssueID is:" + issueID);
         return issueID;
-    }
-
-    private static String extractIssueIDFromSuccessJSON(String successJSON) {
-        System.out.println(successJSON);
-        String[] JSONComponents = successJSON.split(",");
-        String[] idComponents = JSONComponents[0].split(":");
-        String id = idComponents[1];
-        id = id.replace("\"", "");
-
-        return id;
     }
 }

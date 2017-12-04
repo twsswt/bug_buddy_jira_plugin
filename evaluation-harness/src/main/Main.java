@@ -8,7 +8,8 @@ import scraper.CSVIssueReader;
 import scraper.Scraper;
 import sender.Sender;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -60,7 +61,6 @@ class Main {
 
             writeJSONToFile(issueJson, issueJsonFilename);
         }
-
 
 
         // Post the project, then all users, then all issues to Jira
