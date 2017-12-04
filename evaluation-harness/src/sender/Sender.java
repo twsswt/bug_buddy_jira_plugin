@@ -6,20 +6,13 @@ import java.io.InputStreamReader;
 
 public class Sender {
 
-    public static final String DEFAULT_JIRA_IP = "localhost";
-    public static final String DEFAULT_JIRA_PORT = "2990";
-
     private static final String CURL_POST_PREFIX = "curl -D- -u admin:admin -X POST --data @";
     private static final String CURL_POST_MIDFIX = " -H Content-Type:application/json ";
 
-    private String jiraIP;
-    private String jiraPort;
+    private final String jiraIP;
+    private final String jiraPort;
     private String jiraAPILocation;
     private String issueJSONLocation;
-
-    public Sender() {
-        this(DEFAULT_JIRA_IP, DEFAULT_JIRA_PORT);
-    }
 
     public Sender(String jiraIP, String jiraPort) {
         this.jiraIP = jiraIP;
@@ -37,7 +30,7 @@ public class Sender {
         return id;
     }
 
-    public void updateJiraAPILocation() {
+    private void updateJiraAPILocation() {
         this.jiraAPILocation = "http://" + this.jiraIP + ":" + jiraPort + "/jira/rest/api/2/";
     }
 

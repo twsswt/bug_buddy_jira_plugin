@@ -18,6 +18,8 @@ import java.util.Set;
 class Main {
 
     private static int maxIssuesToProcess = Integer.MAX_VALUE;
+    private static String jiraIP = "localhost";
+    private static String jiraPort = "2990";
 
     public static void main(String[] args) {
 
@@ -64,7 +66,7 @@ class Main {
 
 
         // Post the project, then all users, then all issues to Jira
-        Sender sender = new Sender();
+        Sender sender = new Sender(jiraIP, jiraPort);
         sender.setIssueJSONLocation(issueJSONlocation);
         sender.sendPostCommand("project.json", "project");
 
@@ -92,11 +94,13 @@ class Main {
     }
 
     private static void processArguments(String[] args) {
-        if (args.length != 1) {
+        if (args.length != 3) {
             throw new IllegalArgumentException("Not Enough Arguments");
         }
 
         maxIssuesToProcess = Integer.parseInt(args[0]);
+        jiraIP = args[1];
+        jiraPort = args[2];
     }
 
     private static void downloadIssueXMLIfRequired(Scraper s, FirefoxIssue issue, int current) {
