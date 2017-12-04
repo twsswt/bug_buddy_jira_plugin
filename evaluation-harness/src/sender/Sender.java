@@ -1,10 +1,15 @@
 package sender;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
 public class Sender {
+
+    private static Logger logger = LogManager.getLogger(Sender.class);
 
     private static final String CURL_POST_PREFIX = "curl -D- -u admin:admin -X POST --data @";
     private static final String CURL_POST_MIDFIX = " -H Content-Type:application/json ";
@@ -21,7 +26,6 @@ public class Sender {
     }
 
     private static String extractIssueIDFromSuccessJSON(String successJSON) {
-        System.out.println(successJSON);
         String[] JSONComponents = successJSON.split(",");
         String[] idComponents = JSONComponents[0].split(":");
         String id = idComponents[1];
@@ -42,7 +46,7 @@ public class Sender {
         try {
             String curlCommand = CURL_POST_PREFIX + issueJSONLocation + filename + CURL_POST_MIDFIX + this.jiraAPILocation + apiSection;
 
-            System.out.println(curlCommand);
+            logger.info("Sending: " + curlCommand);
             Process p = Runtime.getRuntime().exec(curlCommand);
             p.waitFor();
 
@@ -50,7 +54,7 @@ public class Sender {
             BufferedReader reader = new BufferedReader(new InputStreamReader(stdout));
             String line;
             while ((line = reader.readLine()) != null) {
-                System.out.println(line);
+                logger.debug("Sending: " + line);
             }
 
         } catch (Exception e) {
@@ -63,7 +67,7 @@ public class Sender {
         try {
             String curlCommand = CURL_POST_PREFIX + issueJSONLocation + filename + CURL_POST_MIDFIX + this.jiraAPILocation + apiSection;
 
-            System.out.println(curlCommand);
+            logger.info("Sending: " + curlCommand);
             Process p = Runtime.getRuntime().exec(curlCommand);
             p.waitFor();
 
@@ -72,6 +76,7 @@ public class Sender {
             String line;
             while ((line = reader.readLine()) != null) {
                 successJSON = line;
+                logger.debug(line);
             }
 
 
@@ -79,7 +84,6 @@ public class Sender {
             e.printStackTrace();
         }
         String issueID = extractIssueIDFromSuccessJSON(successJSON);
-        System.out.println("IssueID is:" + issueID);
         return issueID;
     }
 }

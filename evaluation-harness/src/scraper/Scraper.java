@@ -1,6 +1,8 @@
 package scraper;
 
 import evaluationStructures.FirefoxIssue;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -12,6 +14,7 @@ import java.net.URL;
 import java.util.ArrayList;
 
 public class Scraper {
+    private static Logger logger = LogManager.getLogger(Scraper.class);
 
     /**
      * getIssueXML will download the XML version of the specified issue, and save
@@ -30,8 +33,10 @@ public class Scraper {
             StringBuilder xmlDocumentBuffer = new StringBuilder();
             String xmlDocument = downloadPageContents(issueURL, xmlDocumentBuffer);
             saveDataToFile(xmlDocument, issueXMLFile);
+            logger.info("Downloaded XML for issue " + issue.getBugID());
             return true;
         } else {
+            logger.info("Skipped downloading XML for issue " + issue.getBugID());
             return false;
         }
     }
@@ -101,6 +106,7 @@ public class Scraper {
             e.printStackTrace();
         }
 
+        logger.info("Extracted " + comments.size() + " comments for issue " + issue.getBugID());
         return comments;
     }
 
