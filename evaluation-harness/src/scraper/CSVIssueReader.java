@@ -1,6 +1,8 @@
 package scraper;
 
 import evaluationStructures.FirefoxIssue;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -9,6 +11,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public class CSVIssueReader {
+    private static Logger logger = LogManager.getLogger(CSVIssueReader.class);
 
     /**
      * readIssuesFromCSV will create a list of Issues from a CSV file
@@ -24,6 +27,7 @@ public class CSVIssueReader {
         File f = new File(filepath);
 
         if (!f.exists()) {
+            logger.error("CSV file " + filepath + " not found!");
             throw new FileNotFoundException();
         }
 
@@ -41,6 +45,7 @@ public class CSVIssueReader {
             e.printStackTrace();
         }
 
+        logger.info("Successfully read issues from CSV file " + filepath);
         return issues;
     }
 
