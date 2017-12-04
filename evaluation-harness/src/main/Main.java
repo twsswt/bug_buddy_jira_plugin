@@ -112,15 +112,6 @@ class Main {
         jiraPort = args[2];
     }
 
-    private static void downloadIssueXMLIfRequired(Scraper s, FirefoxIssue issue, int current) {
-        boolean downloaded = s.getIssueXML(issue, ("../project-issue-data/bugreport.mozilla.firefox/issueXML/"));
-        if (downloaded) {
-            System.out.println("Downloaded:\t" + (current + 1) + "/" + maxIssuesToProcess);
-        } else {
-            System.out.println("Skipped:\t" + (current + 1) + "/" + maxIssuesToProcess);
-        }
-    }
-
     private static ArrayList<FirefoxIssue> getIssueData() {
         // Extract issue data from the Bug Database CSV File
         CSVIssueReader reader = new CSVIssueReader();
@@ -143,7 +134,8 @@ class Main {
         Scraper s = new Scraper();
 
         for (int i = 0; i < maxIssuesToProcess; i++) {
-            downloadIssueXMLIfRequired(s, issues.get(i), i);
+            logger.info("Processing issue " + (i+1) + "/" + maxIssuesToProcess);
+            s.getIssueXML(issues.get(i), ("../project-issue-data/bugreport.mozilla.firefox/issueXML/"));
 
             ArrayList<String> comments = s.extractIssueComments(issues.get(i));
             issues.get(i).setComments(comments);
