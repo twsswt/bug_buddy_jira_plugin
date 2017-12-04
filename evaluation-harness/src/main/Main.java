@@ -6,6 +6,7 @@ import evaluationStructures.JiraIssue;
 import evaluationStructures.JiraProject;
 import scraper.CSVIssueReader;
 import scraper.Scraper;
+import sender.Sender;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -63,16 +64,20 @@ class Main {
 
 
         // Post the project, then all users, then all issues to Jira
-        String basicCurlCommand1 = "curl -D- -u admin:admin -X POST --data @" + issueJSONlocation;
-        String basicCurlCommand2 = " -H Content-Type:application/json http://localhost:2990/jira/rest/api/2/";
+        String curlPostPrefix = "curl -D- -u admin:admin -X POST --data @" + issueJSONlocation;
+        String curlPostMidfix = " -H Content-Type:application/json http://localhost:2990/jira/rest/api/2/";
 
-        sendGeneralCurlCommand(basicCurlCommand1 + "project.json" + basicCurlCommand2 + "project");
+        Sender sender = new Sender();
+        sender.setIssueJSONLocation(issueJSONlocation);
+        sender.sendPostCommand("project.json", "project");
+
         for (String email : userEmails) {
-            sendGeneralCurlCommand(basicCurlCommand1 + "users/" + email + ".json" + basicCurlCommand2 + "user");
+            String emailJSONFilename = "users/" + email + ".json";
+            sender.sendPostCommand(emailJSONFilename, "user");
         }
 
         for (FirefoxIssue firefoxIssue : firefoxIssues) {
-            String issueID = sendAddIssueCurlCommand(basicCurlCommand1 + "issues/" + firefoxIssue.getBugID() + ".json" + basicCurlCommand2 + "issue");
+            String issueID = sendAddIssueCurlCommand(curlPostPrefix + "issues/" + firefoxIssue.getBugID() + ".json" + curlPostMidfix + "issue");
 
             ArrayList<String> comments = firefoxIssue.getComments();
             for (int i = 0; i < comments.size(); i++) {
@@ -84,7 +89,7 @@ class Main {
                 writeJSONToFile(commentJson, commentJsonFilename);
 
                 // Post to Jira
-                sendGeneralCurlCommand(basicCurlCommand1 + "comments/" + issueID + "-" + i + ".json" + basicCurlCommand2 + "issue/" + issueID + "/comment");
+                sender.sendPostCommand("comments/" + issueID + "-" + i + ".json", "issue/" + issueID + "/comment");
             }
         }
 
@@ -145,25 +150,6 @@ class Main {
             writer.write(JSON);
             writer.close();
         } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private static void sendGeneralCurlCommand(String curlCommand) {
-        try {
-            System.out.println(curlCommand);
-            Process p = Runtime.getRuntime().exec(curlCommand);
-            p.waitFor();
-
-            InputStream stdout = p.getInputStream();
-            BufferedReader reader = new BufferedReader(new InputStreamReader(stdout));
-            String line;
-            while ((line = reader.readLine()) != null) {
-                System.out.println(line);
-            }
-
-
-        } catch (Exception e) {
             e.printStackTrace();
         }
     }
