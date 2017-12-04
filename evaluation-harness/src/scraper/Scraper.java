@@ -28,7 +28,7 @@ public class Scraper {
 
         if (!issueXMLFile.exists()) {
             StringBuilder xmlDocumentBuffer = new StringBuilder();
-            String xmlDocument = downloadWebpageContents(issueURL, xmlDocumentBuffer);
+            String xmlDocument = downloadPageContents(issueURL, xmlDocumentBuffer);
             saveDataToFile(xmlDocument, issueXMLFile);
             return true;
         } else {
@@ -46,14 +46,14 @@ public class Scraper {
         }
     }
 
-    private String downloadWebpageContents(String issueURL, StringBuilder xmlDocumentBuffer) {
+    private String downloadPageContents(String issueURL, StringBuilder xmlDocumentBuffer) {
         try {
-            // Open the webpage for reading
+            // Open the page for reading
             URL url = new URL(issueURL);
             InputStream stream = url.openStream();
             BufferedReader br = new BufferedReader(new InputStreamReader(stream));
 
-            // Read the webpage line by line
+            // Read the page line by line
             String line;
             while ((line = br.readLine()) != null) {
                 xmlDocumentBuffer.append(line);

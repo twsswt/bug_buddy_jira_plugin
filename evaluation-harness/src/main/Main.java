@@ -36,7 +36,7 @@ class Main {
 
         writeJSONToFile(jiraProjectJson, jiraProjectJsonFilename);
 
-        // Get every unique email in the firefox issues dataset
+        // Get every unique email in the firefox issues data set
         Set<String> userEmails = new HashSet<>();
         for (FirefoxIssue issue : firefoxIssues) {
             userEmails.add(issue.getAssigneeEmail());
