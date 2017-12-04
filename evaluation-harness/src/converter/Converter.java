@@ -1,9 +1,9 @@
 package converter;
 
 import com.google.gson.Gson;
-import main.FirefoxIssue;
-import main.JiraIssue;
-import main.JiraProject;
+import evaluationStructures.FirefoxIssue;
+import evaluationStructures.JiraIssue;
+import evaluationStructures.JiraProject;
 
 public class Converter {
     private String projectKey;

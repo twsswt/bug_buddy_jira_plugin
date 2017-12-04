@@ -1,6 +1,6 @@
 package scraper;
 
-import main.FirefoxIssue;
+import evaluationStructures.FirefoxIssue;
 
 import java.io.File;
 import java.io.FileNotFoundException;

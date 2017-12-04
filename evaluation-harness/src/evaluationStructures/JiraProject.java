@@ -1,4 +1,4 @@
-package main;
+package evaluationStructures;
 
 public class JiraProject {
     private String key;

@@ -1,4 +1,4 @@
-package main;
+package evaluationStructures;
 
 public class JiraIssue {
     private String projectKey;

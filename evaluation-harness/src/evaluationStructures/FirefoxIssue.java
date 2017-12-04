@@ -1,4 +1,4 @@
-package main;
+package evaluationStructures;
 
 import java.util.ArrayList;
 

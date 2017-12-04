@@ -1,6 +1,6 @@
 package scraper;
 
-import main.FirefoxIssue;
+import evaluationStructures.FirefoxIssue;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;

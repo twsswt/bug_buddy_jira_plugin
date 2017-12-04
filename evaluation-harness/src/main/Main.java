@@ -1,6 +1,9 @@
 package main;
 
 import converter.Converter;
+import evaluationStructures.FirefoxIssue;
+import evaluationStructures.JiraIssue;
+import evaluationStructures.JiraProject;
 import scraper.CSVIssueReader;
 import scraper.Scraper;
 
