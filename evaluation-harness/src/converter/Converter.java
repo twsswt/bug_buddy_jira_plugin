@@ -4,16 +4,21 @@ import com.google.gson.Gson;
 import evaluationStructures.FirefoxIssue;
 import evaluationStructures.JiraIssue;
 import evaluationStructures.JiraProject;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class Converter {
+    private static Logger logger = LogManager.getLogger(Converter.class);
+
     private String projectKey;
 
     public Converter() {
-        this.projectKey = "FRFX";
+        this("FRFX");
     }
 
     public Converter(String projectKey) {
         this.projectKey = projectKey;
+        logger.info("Converter for project " + this.projectKey + " created");
     }
 
     public String getProjectKey() {
