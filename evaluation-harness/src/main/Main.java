@@ -4,6 +4,8 @@ import converter.Converter;
 import evaluationStructures.FirefoxIssue;
 import evaluationStructures.JiraIssue;
 import evaluationStructures.JiraProject;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import scraper.CSVIssueReader;
 import scraper.Scraper;
 import sender.Sender;
@@ -21,6 +23,8 @@ class Main {
     private static String jiraIP = "localhost";
     private static String jiraPort = "2990";
 
+    private static Logger logger = LogManager.getLogger(Main.class);
+
     public static void main(String[] args) {
 
         processArguments(args);
@@ -37,6 +41,7 @@ class Main {
         String jiraProjectJsonFilename = issueJSONlocation + "project.json";
 
         writeJSONToFile(jiraProjectJson, jiraProjectJsonFilename);
+        logger.info("Written JSON for Project!");
 
         // Get every unique email in the firefox issues data set
         Set<String> userEmails = new HashSet<>();
@@ -52,8 +57,8 @@ class Main {
             String userJsonFilename = issueJSONlocation + "users/" + email + ".json";
 
             writeJSONToFile(userJson, userJsonFilename);
-
         }
+        logger.info("Written JSON for all unique users");
 
         // Create jira json from every issue, and write to a file
         for (FirefoxIssue firefoxIssue : firefoxIssues) {
@@ -63,17 +68,20 @@ class Main {
 
             writeJSONToFile(issueJson, issueJsonFilename);
         }
+        logger.info("Written JSON for every issue");
 
 
         // Post the project, then all users, then all issues to Jira
         Sender sender = new Sender(jiraIP, jiraPort);
         sender.setIssueJSONLocation(issueJSONlocation);
         sender.sendPostCommand("project.json", "project");
+        logger.info("Posted Project to JIRA");
 
         for (String email : userEmails) {
             String emailJSONFilename = "users/" + email + ".json";
             sender.sendPostCommand(emailJSONFilename, "user");
         }
+        logger.info("Posted all users to JIRA");
 
         for (FirefoxIssue firefoxIssue : firefoxIssues) {
             String issueID = sender.sendPostCommandExtractIssueID("issues/" + firefoxIssue.getBugID() + ".json", "issue");
@@ -91,6 +99,7 @@ class Main {
                 sender.sendPostCommand("comments/" + issueID + "-" + i + ".json", "issue/" + issueID + "/comment");
             }
         }
+        logger.info("Posted all issues and comments to JIRA");
     }
 
     private static void processArguments(String[] args) {
