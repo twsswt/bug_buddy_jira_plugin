@@ -41,7 +41,7 @@ public class ScraperTest {
     @Test
     public void ensureSaveXMLToFileDoesntThrowException() throws Exception {
         Scraper s = new Scraper();
-        s.saveXMLToFile("<head></head>", new File("tests/test-xml-files/212778.xml"));
+        s.saveDataToFile("<head></head>", new File("tests/test-xml-files/212778.xml"));
     }
 
     @Test

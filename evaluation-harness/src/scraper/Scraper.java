@@ -29,17 +29,17 @@ public class Scraper {
         if (!issueXMLFile.exists()) {
             StringBuilder xmlDocumentBuffer = new StringBuilder();
             String xmlDocument = downloadWebpageContents(issueURL, xmlDocumentBuffer);
-            saveXMLToFile(xmlDocument, issueXMLFile);
+            saveDataToFile(xmlDocument, issueXMLFile);
             return true;
         } else {
             return false;
         }
     }
 
-    void saveXMLToFile(String xmlDocument, File issueXMLFile) {
+    public void saveDataToFile(String data, File filename) {
         try {
-            BufferedWriter writer = new BufferedWriter(new FileWriter(issueXMLFile));
-            writer.write(xmlDocument);
+            BufferedWriter writer = new BufferedWriter(new FileWriter(filename));
+            writer.write(data);
             writer.close();
         } catch (IOException e) {
             e.printStackTrace();

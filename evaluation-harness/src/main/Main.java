@@ -89,8 +89,6 @@ class Main {
                 sender.sendPostCommand("comments/" + issueID + "-" + i + ".json", "issue/" + issueID + "/comment");
             }
         }
-
-
     }
 
     private static void processArguments(String[] args) {
@@ -142,13 +140,8 @@ class Main {
     }
 
     private static void writeJSONToFile(String JSON, String filename) {
-        try {
-            BufferedWriter writer = new BufferedWriter(new FileWriter(filename));
-            writer.write(JSON);
-            writer.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        Scraper s = new Scraper();
+        s.saveDataToFile(JSON, new File(filename));
     }
 }
 
