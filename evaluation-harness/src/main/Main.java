@@ -81,7 +81,7 @@ class Main {
                 String comment = comments.get(i);
 
                 // Convert each comment to JSON
-                String commentJson = converter.convertCommentToJiraJSON(comment, issueID);
+                String commentJson = converter.convertCommentToJiraJSON(comment);
                 String commentJsonFilename = issueJSONlocation + "comments/" + issueID + "-" + i + ".json";
                 writeJSONToFile(commentJson, commentJsonFilename);
 

@@ -69,13 +69,9 @@ public class Converter {
                 "}";
     }
 
-    public String convertCommentToJiraJSON(String comment, String issueID) {
+    public String convertCommentToJiraJSON(String comment) {
         return "{\n" +
                 "\"body\":\"" + comment + "\"\n" +
-                //"\"visibility\":{\n" +
-                //"\"type\":\"role\",\n" +
-                //"\"value\":\"Administrators\"\n" +
-                //"}\n" +
                 "}";
     }
 }
