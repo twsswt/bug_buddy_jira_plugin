@@ -10,7 +10,7 @@ public class Sender {
     public static final String DEFAULT_JIRA_PORT = "2990";
 
     private static final String CURL_POST_PREFIX = "curl -D- -u admin:admin -X POST --data @";
-    private static final String CURL_POST_MIDFIX = " -H Content-Type:application/json http://localhost:2990/jira/rest/api/2/";
+    private static final String CURL_POST_MIDFIX = " -H Content-Type:application/json ";
 
     private String jiraIP;
     private String jiraPort;
@@ -47,7 +47,7 @@ public class Sender {
 
     public void sendPostCommand(String filename, String apiSection) {
         try {
-            String curlCommand = CURL_POST_PREFIX + issueJSONLocation + filename + CURL_POST_MIDFIX + apiSection;
+            String curlCommand = CURL_POST_PREFIX + issueJSONLocation + filename + CURL_POST_MIDFIX + this.jiraAPILocation + apiSection;
 
             System.out.println(curlCommand);
             Process p = Runtime.getRuntime().exec(curlCommand);
@@ -68,7 +68,7 @@ public class Sender {
     public String sendPostCommandExtractIssueID(String filename, String apiSection) {
         String successJSON = "";
         try {
-            String curlCommand = CURL_POST_PREFIX + issueJSONLocation + filename + CURL_POST_MIDFIX + apiSection;
+            String curlCommand = CURL_POST_PREFIX + issueJSONLocation + filename + CURL_POST_MIDFIX + this.jiraAPILocation + apiSection;
 
             System.out.println(curlCommand);
             Process p = Runtime.getRuntime().exec(curlCommand);
