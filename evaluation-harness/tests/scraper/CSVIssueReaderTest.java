@@ -15,7 +15,6 @@ public class CSVIssueReaderTest {
 
         ArrayList<FirefoxIssue> issues = reader.readIssuesFromCSV("tests/test-xml-files/firefox-1.csv");
         FirefoxIssue expectedIssue = new FirefoxIssue();
-        System.out.println(issues.get(0));
         expectedIssue.setBugID(249601);
         expectedIssue.setComponent("Location Bar and Autocomplete");
         expectedIssue.setReporterEmail("twalker@mozilla.com");
