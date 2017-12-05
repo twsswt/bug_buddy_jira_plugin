@@ -8,15 +8,28 @@ import evaluationStructures.JiraProject;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+/**
+ * This class contains functions for converting from one type of Jira / Firefox object to another
+ *
+ * This could be from an Object to a different Object, or from an Object to a JSON string
+ */
 public class Converter {
     private static final Logger logger = LogManager.getLogger(Converter.class);
+    private static final String DEFAULT_PROJECT_KEY = "FRFX";
 
     private String projectKey;
 
+    /**
+     * Creates a new converter with the default project key
+     */
     public Converter() {
-        this("FRFX");
+        this(DEFAULT_PROJECT_KEY);
     }
 
+    /**
+     * Creates a new converter with the specified project key
+     * @param projectKey
+     */
     public Converter(String projectKey) {
         this.projectKey = projectKey;
         logger.info("Converter for project " + this.projectKey + " created");
@@ -30,6 +43,11 @@ public class Converter {
         this.projectKey = projectKey;
     }
 
+    /**
+     * Converts a Firefox Issue to a Jira Issue
+     * @param firefoxIssue the firefox issue to be converted
+     * @return a jira issue, converted from the firefox issue
+     */
     public JiraIssue convertFirefoxIssueToJiraIssue(FirefoxIssue firefoxIssue) {
         JiraIssue ji = new JiraIssue(String.valueOf(firefoxIssue.getBugID()));
         ji.setProjectKey(projectKey);
@@ -40,6 +58,12 @@ public class Converter {
         return ji;
     }
 
+    /**
+     * Converts a Jira Issue to a JSON string, suitable for POSTing to Jira
+     * REST API
+     * @param jiraIssue the jira issue to be converted
+     * @return a json string, representing the jira issue
+     */
     public String convertJiraIssueToJiraJSON(JiraIssue jiraIssue) {
 
         return "{\n" +
@@ -61,13 +85,25 @@ public class Converter {
                 "}";
     }
 
+    /**
+     * Converts a Jira Project to a JSON string, suitable for POSTing to the Jira
+     * REST API
+     * @param jiraProject the jira project to be converted
+     * @return a json string, representing the jira project
+     */
     public String convertJiraProjectToJiraJSON(JiraProject jiraProject) {
         Gson gson = new Gson();
         return gson.toJson(jiraProject);
     }
 
+    /**
+     * Converts an Email Address to a JSON string, suitable for POSTing to the Jira
+     * REST API
+     * @param email the email address to be converted
+     * @return a json string, representing the email
+     */
     public String convertEmailAddressToJiraUser(String email) {
-        return "{\n" +
+        return "{\n"
                 "\"name\":\"" + email + "\",\n" +
                 "\"password\":\"" + email + "\",\n" +
                 "\"emailAddress\":\"" + email + "\",\n" +
@@ -75,6 +111,12 @@ public class Converter {
                 "}";
     }
 
+    /**
+     * Converts a comment to a JSON string, suitable for POSTing to the Jira
+     * REST API
+     * @param comment the comment to be converted
+     * @return a json string, representing the comment
+     */
     public String convertCommentToJiraJSON(FirefoxComment comment) {
 
         // Escape all quote characters in comment ( replace all " with \" )
