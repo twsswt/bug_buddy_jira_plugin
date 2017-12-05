@@ -10,7 +10,7 @@ import org.apache.logging.log4j.Logger;
 
 /**
  * This class contains functions for converting from one type of Jira / Firefox object to another
- *
+ * <p>
  * This could be from an Object to a different Object, or from an Object to a JSON string
  */
 public class Converter {
@@ -28,7 +28,8 @@ public class Converter {
 
     /**
      * Creates a new converter with the specified project key
-     * @param projectKey
+     *
+     * @param projectKey the key for the project we wish to create
      */
     public Converter(String projectKey) {
         this.projectKey = projectKey;
@@ -45,6 +46,7 @@ public class Converter {
 
     /**
      * Converts a Firefox Issue to a Jira Issue
+     *
      * @param firefoxIssue the firefox issue to be converted
      * @return a jira issue, converted from the firefox issue
      */
@@ -61,6 +63,7 @@ public class Converter {
     /**
      * Converts a Jira Issue to a JSON string, suitable for POSTing to Jira
      * REST API
+     *
      * @param jiraIssue the jira issue to be converted
      * @return a json string, representing the jira issue
      */
@@ -88,6 +91,7 @@ public class Converter {
     /**
      * Converts a Jira Project to a JSON string, suitable for POSTing to the Jira
      * REST API
+     *
      * @param jiraProject the jira project to be converted
      * @return a json string, representing the jira project
      */
@@ -99,11 +103,12 @@ public class Converter {
     /**
      * Converts a user to a JSON string, suitable for POSTing to the Jira
      * REST API
+     *
      * @param userEmail the user email address to be converted
      * @return a json string, representing the user
      */
     public String convertUserToJiraJSON(String userEmail) {
-        return "{\n" + 
+        return "{\n" +
                 "\"name\":\"" + userEmail + "\",\n" +
                 "\"password\":\"" + userEmail + "\",\n" +
                 "\"emailAddress\":\"" + userEmail + "\",\n" +
@@ -114,6 +119,7 @@ public class Converter {
     /**
      * Converts a comment to a JSON string, suitable for POSTing to the Jira
      * REST API
+     *
      * @param comment the comment to be converted
      * @return a json string, representing the comment
      */
