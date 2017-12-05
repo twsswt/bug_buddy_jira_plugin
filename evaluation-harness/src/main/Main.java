@@ -135,7 +135,7 @@ class Main {
         Scraper s = new Scraper();
 
         for (int i = 0; i < maxIssuesToProcess; i++) {
-            logger.info("Processing issue " + (i+1) + "/" + maxIssuesToProcess);
+            logger.info("Processing issue " + (i + 1) + "/" + maxIssuesToProcess);
             s.getIssueJSON(issues.get(i), ("../project-issue-data/bugreport.mozilla.firefox/FirefoxIssueJSON/"));
 
             ArrayList<FirefoxComment> comments = s.extractIssueCommentsFromJSON(issues.get(i));
