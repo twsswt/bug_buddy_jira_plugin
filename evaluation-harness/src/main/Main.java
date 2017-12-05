@@ -32,14 +32,14 @@ class Main {
 
         ArrayList<FirefoxIssue> firefoxIssues = getIssueData();
 
-        String issueJSONlocation = "../project-issue-data/bugreport.mozilla.firefox/issueJSON/";
+        String jiraJSONLocation = "../project-issue-data/bugreport.mozilla.firefox/JiraJSON/";
 
         Converter converter = new Converter();
 
         // Create a JIRA Project json, and write to file
         JiraProject jiraProject = new JiraProject();
         String jiraProjectJson = converter.convertJiraProjectToJiraJSON(jiraProject);
-        String jiraProjectJsonFilename = issueJSONlocation + "project.json";
+        String jiraProjectJsonFilename = jiraJSONLocation + "project.json";
 
         writeJSONToFile(jiraProjectJson, jiraProjectJsonFilename);
         logger.info("Written JSON for Project!");
@@ -55,7 +55,7 @@ class Main {
         // Create Jira users from each email address, and write to a file
         for (String email : userEmails) {
             String userJson = converter.convertEmailAddressToJiraUser(email);
-            String userJsonFilename = issueJSONlocation + "users/" + email + ".json";
+            String userJsonFilename = jiraJSONLocation + "users/" + email + ".json";
 
             writeJSONToFile(userJson, userJsonFilename);
         }
@@ -65,7 +65,7 @@ class Main {
         for (FirefoxIssue firefoxIssue : firefoxIssues) {
             JiraIssue jiraIssue = converter.convertFirefoxIssueToJiraIssue(firefoxIssue);
             String issueJson = converter.convertJiraIssueToJiraJSON(jiraIssue);
-            String issueJsonFilename = issueJSONlocation + "issues/" + firefoxIssue.getBugID() + ".json";
+            String issueJsonFilename = jiraJSONLocation + "issues/" + firefoxIssue.getBugID() + ".json";
 
             writeJSONToFile(issueJson, issueJsonFilename);
         }
@@ -74,7 +74,7 @@ class Main {
 
         // Post the project, then all users, then all issues to Jira
         Sender sender = new Sender(jiraIP, jiraPort);
-        sender.setIssueJSONLocation(issueJSONlocation);
+        sender.setIssueJSONLocation(jiraJSONLocation);
         sender.sendPostCommand("project.json", "project");
         logger.info("Posted Project to JIRA");
 
@@ -93,7 +93,7 @@ class Main {
 
                 // Convert each comment to JSON
                 String commentJson = converter.convertCommentToJiraJSON(comment);
-                String commentJsonFilename = issueJSONlocation + "comments/" + issueID + "-" + i + ".json";
+                String commentJsonFilename = jiraJSONLocation + "comments/" + issueID + "-" + i + ".json";
                 writeJSONToFile(commentJson, commentJsonFilename);
 
                 // Post to Jira
@@ -136,7 +136,7 @@ class Main {
 
         for (int i = 0; i < maxIssuesToProcess; i++) {
             logger.info("Processing issue " + (i+1) + "/" + maxIssuesToProcess);
-            s.getIssueXML(issues.get(i), ("../project-issue-data/bugreport.mozilla.firefox/issueXML/"));
+            s.getIssueXML(issues.get(i), ("../project-issue-data/bugreport.mozilla.firefox/FirefoxIssueXML/"));
 
             ArrayList<FirefoxComment> comments = s.extractIssueComments(issues.get(i));
             issues.get(i).setComments(comments);

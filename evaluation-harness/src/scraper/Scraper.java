@@ -16,7 +16,7 @@ import java.util.ArrayList;
 
 public class Scraper {
     private static Logger logger = LogManager.getLogger(Scraper.class);
-    private static final String DEFAULT_ISSUE_DATA_LOCATION = "../project-issue-data/bugreport.mozilla.firefox/issueXML/";
+    private static final String DEFAULT_FIREFOX_ISSUE_XML_LOCATION = "../project-issue-data/bugreport.mozilla.firefox/FirefoxIssueXML/";
 
     public String getIssueDataLocation() {
         return issueDataLocation;
@@ -29,7 +29,7 @@ public class Scraper {
     private String issueDataLocation;
 
     public Scraper() {
-        issueDataLocation = DEFAULT_ISSUE_DATA_LOCATION;
+        issueDataLocation = DEFAULT_FIREFOX_ISSUE_XML_LOCATION;
     }
 
     /**
