@@ -1,6 +1,7 @@
 package converter;
 
 import com.google.gson.Gson;
+import evaluationStructures.FirefoxComment;
 import evaluationStructures.FirefoxIssue;
 import evaluationStructures.JiraIssue;
 import evaluationStructures.JiraProject;
@@ -74,16 +75,19 @@ public class Converter {
                 "}";
     }
 
-    public String convertCommentToJiraJSON(String comment) {
+    public String convertCommentToJiraJSON(FirefoxComment comment) {
 
         // Escape all quote characters in comment ( replace all " with \" )
-        comment = comment.replaceAll("\"", "\\\\\"");
+        comment.setCommentText(comment.getCommentText().replaceAll("\"", "\\\\\""));
 
         // Escape all tab characters in comment
-        comment = comment.replaceAll("\t", "    ");
+        comment.setCommentText(comment.getCommentText().replaceAll("\t", "    "));
+
+        // Add author email to the comment
+        comment.setCommentText("author: " + comment.getAuthorEmail() + "\n\n" + comment.getCommentText());
 
         return "{\n" +
-                "\"body\":\"" + comment + "\"\n" +
+                "\"body\":\"" + comment.getCommentText() + "\"\n" +
                 "}";
     }
 }

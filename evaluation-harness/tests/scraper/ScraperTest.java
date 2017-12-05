@@ -1,5 +1,6 @@
 package scraper;
 
+import evaluationStructures.FirefoxComment;
 import evaluationStructures.FirefoxIssue;
 import org.junit.After;
 import org.junit.Test;
@@ -47,10 +48,12 @@ public class ScraperTest {
     @Test
     public void ensureExtractIssueCommentsExtractsAllComments() throws Exception {
         Scraper s = new Scraper();
+        s.setIssueDataLocation("tests/test-xml-files/");
+
         FirefoxIssue testIssue = new FirefoxIssue();
         testIssue.setBugID(212779);
 
-        ArrayList<String> comments = s.extractIssueComments(testIssue);
+        ArrayList<FirefoxComment> comments = s.extractIssueComments(testIssue);
         int expectedNumComments = 87; // Manual counting is a pain
         assertEquals(expectedNumComments, comments.size());
     }

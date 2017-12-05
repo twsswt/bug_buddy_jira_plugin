@@ -8,7 +8,7 @@ public class FirefoxIssue {
     private String reporterEmail;
     private String assigneeEmail;
     private String assigneeEmail30Days;
-    private ArrayList<String> comments;
+    private ArrayList<FirefoxComment> comments;
 
     @Override
     public String toString() {
@@ -22,11 +22,11 @@ public class FirefoxIssue {
                 '}';
     }
 
-    public ArrayList<String> getComments() {
+    public ArrayList<FirefoxComment> getComments() {
         return comments;
     }
 
-    public void setComments(ArrayList<String> comments) {
+    public void setComments(ArrayList<FirefoxComment> comments) {
         this.comments = comments;
     }
 

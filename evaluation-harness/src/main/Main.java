@@ -1,6 +1,7 @@
 package main;
 
 import converter.Converter;
+import evaluationStructures.FirefoxComment;
 import evaluationStructures.FirefoxIssue;
 import evaluationStructures.JiraIssue;
 import evaluationStructures.JiraProject;
@@ -86,9 +87,9 @@ class Main {
         for (FirefoxIssue firefoxIssue : firefoxIssues) {
             String issueID = sender.sendPostCommandExtractIssueID("issues/" + firefoxIssue.getBugID() + ".json", "issue");
 
-            ArrayList<String> comments = firefoxIssue.getComments();
+            ArrayList<FirefoxComment> comments = firefoxIssue.getComments();
             for (int i = 0; i < comments.size(); i++) {
-                String comment = comments.get(i);
+                FirefoxComment comment = comments.get(i);
 
                 // Convert each comment to JSON
                 String commentJson = converter.convertCommentToJiraJSON(comment);
@@ -137,7 +138,7 @@ class Main {
             logger.info("Processing issue " + (i+1) + "/" + maxIssuesToProcess);
             s.getIssueXML(issues.get(i), ("../project-issue-data/bugreport.mozilla.firefox/issueXML/"));
 
-            ArrayList<String> comments = s.extractIssueComments(issues.get(i));
+            ArrayList<FirefoxComment> comments = s.extractIssueComments(issues.get(i));
             issues.get(i).setComments(comments);
         }
 

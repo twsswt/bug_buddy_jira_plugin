@@ -1,5 +1,6 @@
 package scraper;
 
+import evaluationStructures.FirefoxComment;
 import evaluationStructures.FirefoxIssue;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -15,6 +16,21 @@ import java.util.ArrayList;
 
 public class Scraper {
     private static Logger logger = LogManager.getLogger(Scraper.class);
+    private static final String DEFAULT_ISSUE_DATA_LOCATION = "../project-issue-data/bugreport.mozilla.firefox/issueXML/";
+
+    public String getIssueDataLocation() {
+        return issueDataLocation;
+    }
+
+    public void setIssueDataLocation(String issueDataLocation) {
+        this.issueDataLocation = issueDataLocation;
+    }
+
+    private String issueDataLocation;
+
+    public Scraper() {
+        issueDataLocation = DEFAULT_ISSUE_DATA_LOCATION;
+    }
 
     /**
      * getIssueXML will download the XML version of the specified issue, and save
@@ -82,10 +98,10 @@ public class Scraper {
      * @param issue the issue for which we wish to extract comments
      * @return an ArrayList containing each comment on the issue
      */
-    public ArrayList<String> extractIssueComments(FirefoxIssue issue) {
+    public ArrayList<FirefoxComment> extractIssueComments(FirefoxIssue issue) {
 
-        ArrayList<String> comments = new ArrayList<>();
-        String issueFilename = "../project-issue-data/bugreport.mozilla.firefox/issueXML/" + issue.getBugID() + ".xml";
+        ArrayList<FirefoxComment> comments = new ArrayList<>();
+        String issueFilename = issueDataLocation + issue.getBugID() + ".xml";
 
         try {
             DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
@@ -97,8 +113,10 @@ public class Scraper {
 
             NodeList nodeList = doc.getElementsByTagName("thetext");
             for (int i = 0; i < nodeList.getLength(); i++) {
+                FirefoxComment comment = new FirefoxComment();
                 Node n = nodeList.item(i);
-                comments.add(n.getTextContent());
+                comment.setCommentText(n.getTextContent());
+                comments.add(comment);
             }
 
 
