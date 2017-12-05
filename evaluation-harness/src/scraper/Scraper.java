@@ -22,7 +22,7 @@ import java.util.ArrayList;
 public class Scraper {
     private static final String DEFAULT_FIREFOX_ISSUE_XML_LOCATION = "../project-issue-data/bugreport.mozilla.firefox/FirefoxIssueXML/";
     private static final String DEFAULT_FIREFOX_ISSUE_JSON_LOCATION = "../project-issue-data/bugreport.mozilla.firefox/FirefoxIssueJSON/";
-    private static Logger logger = LogManager.getLogger(Scraper.class);
+    private static final Logger logger = LogManager.getLogger(Scraper.class);
     private String issueXMLDataLocation;
     private String issueJSONDataLocation;
 
@@ -72,7 +72,7 @@ public class Scraper {
         }
     }
 
-    public boolean getIssueJSON(FirefoxIssue issue, String jsonRootFolder) {
+    public void getIssueJSON(FirefoxIssue issue, String jsonRootFolder) {
         try {
 
             String outputFilename = jsonRootFolder + issue.getBugID() + ".json";
@@ -86,24 +86,21 @@ public class Scraper {
 
                 InputStream stdout = p.getInputStream();
                 BufferedReader reader = new BufferedReader(new InputStreamReader(stdout));
-                String jsonDocument = "";
-                String line = "";
+                StringBuilder jsonDocument = new StringBuilder();
+                String line;
                 while ((line = reader.readLine()) != null) {
-                    jsonDocument = jsonDocument + line;
+                    jsonDocument.append(line);
                 }
 
                 p.waitFor();
-                saveDataToFile(jsonDocument, issueJSONFile);
+                saveDataToFile(jsonDocument.toString(), issueJSONFile);
                 logger.info("Downloaded JSON for issue " + issue.getBugID());
-                return true;
             } else {
                 logger.info("Skipped Downloading JSON for issue " + issue.getBugID());
-                return false;
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return false;
     }
 
     public void saveDataToFile(String data, File filename) {

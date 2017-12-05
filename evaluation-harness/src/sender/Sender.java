@@ -11,7 +11,7 @@ public class Sender {
 
     private static final String CURL_POST_PREFIX = "curl -D- -u admin:admin -X POST --data @";
     private static final String CURL_POST_MIDFIX = " -H Content-Type:application/json ";
-    private static Logger logger = LogManager.getLogger(Sender.class);
+    private static final Logger logger = LogManager.getLogger(Sender.class);
     private final String jiraIP;
     private final String jiraPort;
     private String jiraAPILocation;
@@ -87,7 +87,6 @@ public class Sender {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        String issueID = extractIssueIDFromSuccessJSON(successJSON);
-        return issueID;
+        return extractIssueIDFromSuccessJSON(successJSON);
     }
 }

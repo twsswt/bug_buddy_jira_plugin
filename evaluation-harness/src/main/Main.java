@@ -20,11 +20,10 @@ import java.util.Set;
 
 class Main {
 
+    private static final Logger logger = LogManager.getLogger(Main.class);
     private static int maxIssuesToProcess = Integer.MAX_VALUE;
     private static String jiraIP = "localhost";
     private static String jiraPort = "2990";
-
-    private static Logger logger = LogManager.getLogger(Main.class);
 
     public static void main(String[] args) {
 

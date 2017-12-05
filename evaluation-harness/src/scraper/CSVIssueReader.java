@@ -11,7 +11,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public class CSVIssueReader {
-    private static Logger logger = LogManager.getLogger(CSVIssueReader.class);
+    private static final Logger logger = LogManager.getLogger(CSVIssueReader.class);
 
     /**
      * readIssuesFromCSV will create a list of Issues from a CSV file
