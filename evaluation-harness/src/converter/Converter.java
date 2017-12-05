@@ -86,9 +86,12 @@ public class Converter {
         // Escape all newline characters in comment
         comment.setCommentText(comment.getCommentText().replaceAll("\n", "\\\\n"));
 
+        String authorStatement = "author: " + comment.getAuthorEmail() + "\\n";
+        String createdStatement = "created: " + comment.getCreationTime() + "\\n\\n";
+
         // Add author email and timestamp to the comment
-        String jiraComment = "author: " + comment.getAuthorEmail() + "\\n" +
-                "created: " + comment.getCreationTime() + "\\n\\n" +
+        String jiraComment = authorStatement +
+                createdStatement +
                 comment.getCommentText();
 
         return "{\n" +
