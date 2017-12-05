@@ -2,6 +2,12 @@ package evaluationStructures;
 
 import java.util.ArrayList;
 
+/**
+ * This class represents an issue stored on the
+ * Firefox Bugzilla tracker.
+ *
+ * It only contains fields that are relevant to Auto-assigning issues
+ */
 public class FirefoxIssue {
     private long bugID;
     private String component;

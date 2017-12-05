@@ -1,5 +1,10 @@
 package evaluationStructures;
 
+/**
+ * This class represents an issue in JIRA.
+ *
+ * It only contains fields that are relevant to auto-assigning issues.
+ */
 public class JiraIssue {
     private String projectKey;
     private String summary;

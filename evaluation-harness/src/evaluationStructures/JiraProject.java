@@ -1,5 +1,8 @@
 package evaluationStructures;
 
+/**
+ * This class represents a project in JIRA.
+ */
 public class JiraProject {
     private String key;
     private String name;
