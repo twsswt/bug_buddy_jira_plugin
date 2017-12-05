@@ -7,6 +7,9 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
+/**
+ * Sender is responsible for POSTing JSON documents to the JIRA instance
+ */
 public class Sender {
 
     private static final String CURL_POST_PREFIX = "curl -D- -u admin:admin -X POST --data @";
@@ -17,6 +20,12 @@ public class Sender {
     private String jiraAPILocation;
     private String issueJSONLocation;
 
+    /**
+     * Create a sender which sends to the specified IP and Port
+     *
+     * @param jiraIP   The IP address of the JIRA instance
+     * @param jiraPort the port of the JIRA instance
+     */
     public Sender(String jiraIP, String jiraPort) {
         this.jiraIP = jiraIP;
         this.jiraPort = jiraPort;
@@ -40,6 +49,11 @@ public class Sender {
         this.issueJSONLocation = issueJSONLocation;
     }
 
+    /**
+     * sendPostCommand will send a POST command containing the specified json document, to the specified API section
+     * @param filename the JSON document we wish to POST
+     * @param apiSection The API section we wish to POST to
+     */
     public void sendPostCommand(String filename, String apiSection) {
         String returnedJSON = "";
         try {
@@ -66,6 +80,15 @@ public class Sender {
         }
     }
 
+    /**
+     * This function works the same as sendPostCommand, but also returns the issue ID
+     * which is created by JIRA, when an issue is posted to it
+     *
+     * The issue ID is required when POSTing comments
+     * @param filename the JSON issue we wish to post
+     * @param apiSection the API section we wish to post to
+     * @return The newly created Issue ID
+     */
     public String sendPostCommandExtractIssueID(String filename, String apiSection) {
         String successJSON = "";
         try {
