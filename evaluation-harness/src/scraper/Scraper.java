@@ -19,6 +19,10 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 
+/**
+ * This class is responsible for downloading data from a specified URL, and feeding it
+ * into an appropriate data structure (see package evaluationStructures)
+ */
 public class Scraper {
     private static final String DEFAULT_FIREFOX_ISSUE_XML_LOCATION = "../project-issue-data/bugreport.mozilla.firefox/FirefoxIssueXML/";
     private static final String DEFAULT_FIREFOX_ISSUE_JSON_LOCATION = "../project-issue-data/bugreport.mozilla.firefox/FirefoxIssueJSON/";
@@ -26,6 +30,9 @@ public class Scraper {
     private String issueXMLDataLocation;
     private String issueJSONDataLocation;
 
+    /**
+     * Creates a scraper using default locations for the issue XML and JSON locations
+     */
     public Scraper() {
         issueXMLDataLocation = DEFAULT_FIREFOX_ISSUE_XML_LOCATION;
         issueJSONDataLocation = DEFAULT_FIREFOX_ISSUE_JSON_LOCATION;
@@ -52,7 +59,8 @@ public class Scraper {
      * to a file called bugID.xml
      *
      * @param issue The issue which we want to get an XML version of
-     * @return whether we needed to download the XML or not
+     * @param xmlRootFolder where we want to store the downloaded xml
+     * @return whether we needed to download the XML or not //TODO investigate if this is necessary...
      */
     public boolean getIssueXML(FirefoxIssue issue, String xmlRootFolder) {
         String issueURL = "https://bugzilla.mozilla.org/show_bug.cgi?ctype=xml&id=" + issue.getBugID();
@@ -72,6 +80,13 @@ public class Scraper {
         }
     }
 
+    /**
+     * getIssueJSON will download the JSON version of the specified issue, and save
+     * it to a file called bugID.json
+     *
+     * @param issue The issue which we want to get an XML version of
+     * @param jsonRootFolder where we want to store the downloaded json
+     */
     public void getIssueJSON(FirefoxIssue issue, String jsonRootFolder) {
         try {
 
@@ -103,6 +118,11 @@ public class Scraper {
         }
     }
 
+    /**
+     * saveDataToFile will save the contents of a string to the specified file
+     * @param data the data we wish to save
+     * @param filename the file we wish to save to
+     */
     public void saveDataToFile(String data, File filename) {
         try {
             BufferedWriter writer = new BufferedWriter(new FileWriter(filename));
@@ -174,6 +194,12 @@ public class Scraper {
         return comments;
     }
 
+    /**
+     * extractIssueCommentsFromJSON will extract the comments of an issue
+     * from a JSON document
+     * @param issue the issue for which we wish to extract comments
+     * @return A list containing each comment on the issue
+     */
     public ArrayList<FirefoxComment> extractIssueCommentsFromJSON(FirefoxIssue issue) {
         ArrayList<FirefoxComment> comments = new ArrayList<>();
         String issueFilename = issueJSONDataLocation + issue.getBugID() + ".json";

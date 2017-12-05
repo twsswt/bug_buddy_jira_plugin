@@ -10,6 +10,12 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 
+/**
+ * This class contains methods for reading data from a specific CSV, and storing the data
+ * in the appropriate data structures (see package evaluationStructures)
+ *
+ * The csv can be found at http://openscience.us/repo/issues/bugreport.html
+ */
 public class CSVIssueReader {
     private static final Logger logger = LogManager.getLogger(CSVIssueReader.class);
 
