@@ -83,9 +83,12 @@ public class Converter {
         // Escape all tab characters in comment
         comment.setCommentText(comment.getCommentText().replaceAll("\t", "    "));
 
+        // Escape all newline characters in comment
+        comment.setCommentText(comment.getCommentText().replaceAll("\n", "\\\\n"));
+
         // Add author email and timestamp to the comment
-        String jiraComment = "author: " + comment.getAuthorEmail() + "\n\n" +
-                "created: " + comment.getCreationTime() + "\n\n" +
+        String jiraComment = "author: " + comment.getAuthorEmail() + "\\n" +
+                "created: " + comment.getCreationTime() + "\\n\\n" +
                 comment.getCommentText();
 
         return "{\n" +
