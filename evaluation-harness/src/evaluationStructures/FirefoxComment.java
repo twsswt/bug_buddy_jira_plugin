@@ -4,8 +4,17 @@ public class FirefoxComment {
 
     private String authorEmail;
     private String commentText;
+    private String creationTime;
 
     public FirefoxComment() {
+    }
+
+    public String getCreationTime() {
+        return creationTime;
+    }
+
+    public void setCreationTime(String creationTime) {
+        this.creationTime = creationTime;
     }
 
     public String getAuthorEmail() {

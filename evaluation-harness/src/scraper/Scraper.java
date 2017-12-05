@@ -195,6 +195,7 @@ public class Scraper {
                 JsonObject jsonComment = jsonComments.get(i).getAsJsonObject();
                 firefoxComment.setCommentText(jsonComment.get("raw_text").getAsString());
                 firefoxComment.setAuthorEmail(jsonComment.get("author").getAsString());
+                firefoxComment.setCreationTime(jsonComment.get("creation_time").getAsString());
                 comments.add(firefoxComment);
             }
 

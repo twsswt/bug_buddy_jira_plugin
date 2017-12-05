@@ -83,11 +83,13 @@ public class Converter {
         // Escape all tab characters in comment
         comment.setCommentText(comment.getCommentText().replaceAll("\t", "    "));
 
-        // Add author email to the comment
-        comment.setCommentText("author: " + comment.getAuthorEmail() + "\n\n" + comment.getCommentText());
+        // Add author email and timestamp to the comment
+        String jiraComment = "author: " + comment.getAuthorEmail() + "\n\n" +
+                "created: " + comment.getCreationTime() + "\n\n" +
+                comment.getCommentText();
 
         return "{\n" +
-                "\"body\":\"" + comment.getCommentText() + "\"\n" +
+                "\"body\":\"" + jiraComment + "\"\n" +
                 "}";
     }
 }
