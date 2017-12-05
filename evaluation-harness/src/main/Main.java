@@ -20,11 +20,10 @@ import java.util.Set;
 
 class Main {
 
+    private static final Logger logger = LogManager.getLogger(Main.class);
     private static int maxIssuesToProcess = Integer.MAX_VALUE;
     private static String jiraIP = "localhost";
     private static String jiraPort = "2990";
-
-    private static Logger logger = LogManager.getLogger(Main.class);
 
     public static void main(String[] args) {
 
@@ -135,10 +134,10 @@ class Main {
         Scraper s = new Scraper();
 
         for (int i = 0; i < maxIssuesToProcess; i++) {
-            logger.info("Processing issue " + (i+1) + "/" + maxIssuesToProcess);
-            s.getIssueXML(issues.get(i), ("../project-issue-data/bugreport.mozilla.firefox/FirefoxIssueXML/"));
+            logger.info("Processing issue " + (i + 1) + "/" + maxIssuesToProcess);
+            s.getIssueJSON(issues.get(i), ("../project-issue-data/bugreport.mozilla.firefox/FirefoxIssueJSON/"));
 
-            ArrayList<FirefoxComment> comments = s.extractIssueComments(issues.get(i));
+            ArrayList<FirefoxComment> comments = s.extractIssueCommentsFromJSON(issues.get(i));
             issues.get(i).setComments(comments);
         }
 

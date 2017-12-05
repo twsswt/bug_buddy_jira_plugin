@@ -46,17 +46,31 @@ public class ScraperTest {
     }
 
     @Test
-    public void ensureExtractIssueCommentsExtractsAllComments() throws Exception {
+    public void ensureExtractIssueCommentsFromXMLExtractsAllComments() throws Exception {
         Scraper s = new Scraper();
-        s.setIssueDataLocation("tests/test-xml-files/");
+        s.setIssueXMLDataLocation("tests/test-xml-files/");
 
         FirefoxIssue testIssue = new FirefoxIssue();
         testIssue.setBugID(212779);
 
-        ArrayList<FirefoxComment> comments = s.extractIssueComments(testIssue);
+        ArrayList<FirefoxComment> comments = s.extractIssueCommentsFromXML(testIssue);
         int expectedNumComments = 87; // Manual counting is a pain
         assertEquals(expectedNumComments, comments.size());
     }
+
+    @Test
+    public void ensureExtractIssueCommentsFromJsonExtractsAllComments() throws Exception {
+        Scraper s = new Scraper();
+        s.setIssueJSONDataLocation("tests/test-xml-files/");
+
+        FirefoxIssue testIssue = new FirefoxIssue();
+        testIssue.setBugID(212779);
+
+        ArrayList<FirefoxComment> comments = s.extractIssueCommentsFromJSON(testIssue);
+        int expectedNumComments = 87; // Manual counting
+        assertEquals(expectedNumComments, comments.size());
+    }
+
 
     @After
     public void tearDown() throws Exception {
