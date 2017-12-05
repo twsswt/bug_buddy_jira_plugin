@@ -94,7 +94,7 @@ public class ConverterTest {
                 "\"emailAddress\":\"sbrown1992@gmail.com\",\n" +
                 "\"displayName\":\"sbrown1992@gmail.com\"\n" +
                 "}";
-        String actualJson = c.convertEmailAddressToJiraUser("sbrown1992@gmail.com");
+        String actualJson = c.convertUserToJiraJSON("sbrown1992@gmail.com");
 
         assertEquals(expectedJson, actualJson);
     }

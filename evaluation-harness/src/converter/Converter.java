@@ -97,17 +97,17 @@ public class Converter {
     }
 
     /**
-     * Converts an Email Address to a JSON string, suitable for POSTing to the Jira
+     * Converts a user to a JSON string, suitable for POSTing to the Jira
      * REST API
-     * @param email the email address to be converted
-     * @return a json string, representing the email
+     * @param userEmail the user email address to be converted
+     * @return a json string, representing the user
      */
-    public String convertEmailAddressToJiraUser(String email) {
-        return "{\n"
-                "\"name\":\"" + email + "\",\n" +
-                "\"password\":\"" + email + "\",\n" +
-                "\"emailAddress\":\"" + email + "\",\n" +
-                "\"displayName\":\"" + email + "\"\n" +
+    public String convertUserToJiraJSON(String userEmail) {
+        return "{\n" + 
+                "\"name\":\"" + userEmail + "\",\n" +
+                "\"password\":\"" + userEmail + "\",\n" +
+                "\"emailAddress\":\"" + userEmail + "\",\n" +
+                "\"displayName\":\"" + userEmail + "\"\n" +
                 "}";
     }
 

@@ -53,7 +53,7 @@ class Main {
 
         // Create Jira users from each email address, and write to a file
         for (String email : userEmails) {
-            String userJson = converter.convertEmailAddressToJiraUser(email);
+            String userJson = converter.convertUserToJiraJSON(email);
             String userJsonFilename = jiraJSONLocation + "users/" + email + ".json";
 
             writeJSONToFile(userJson, userJsonFilename);
