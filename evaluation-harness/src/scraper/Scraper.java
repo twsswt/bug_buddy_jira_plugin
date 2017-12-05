@@ -1,5 +1,8 @@
 package scraper;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import evaluationStructures.FirefoxComment;
 import evaluationStructures.FirefoxIssue;
 import org.apache.logging.log4j.LogManager;
@@ -12,24 +15,36 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.*;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 
 public class Scraper {
-    private static Logger logger = LogManager.getLogger(Scraper.class);
     private static final String DEFAULT_FIREFOX_ISSUE_XML_LOCATION = "../project-issue-data/bugreport.mozilla.firefox/FirefoxIssueXML/";
-
-    public String getIssueDataLocation() {
-        return issueDataLocation;
-    }
-
-    public void setIssueDataLocation(String issueDataLocation) {
-        this.issueDataLocation = issueDataLocation;
-    }
-
-    private String issueDataLocation;
+    private static final String DEFAULT_FIREFOX_ISSUE_JSON_LOCATION = "../project-issue-data/bugreport.mozilla.firefox/FirefoxIssueJSON/";
+    private static Logger logger = LogManager.getLogger(Scraper.class);
+    private String issueXMLDataLocation;
+    private String issueJSONDataLocation;
 
     public Scraper() {
-        issueDataLocation = DEFAULT_FIREFOX_ISSUE_XML_LOCATION;
+        issueXMLDataLocation = DEFAULT_FIREFOX_ISSUE_XML_LOCATION;
+        issueJSONDataLocation = DEFAULT_FIREFOX_ISSUE_JSON_LOCATION;
+    }
+
+    public String getIssueXMLDataLocation() {
+        return issueXMLDataLocation;
+    }
+
+    public void setIssueXMLDataLocation(String issueXMLDataLocation) {
+        this.issueXMLDataLocation = issueXMLDataLocation;
+    }
+
+    public String getIssueJSONDataLocation() {
+        return issueJSONDataLocation;
+    }
+
+    public void setIssueJSONDataLocation(String issueJSONDataLocation) {
+        this.issueJSONDataLocation = issueJSONDataLocation;
     }
 
     /**
@@ -55,6 +70,40 @@ public class Scraper {
             logger.info("Skipped downloading XML for issue " + issue.getBugID());
             return false;
         }
+    }
+
+    public boolean getIssueJSON(FirefoxIssue issue, String jsonRootFolder) {
+        try {
+
+            String outputFilename = jsonRootFolder + issue.getBugID() + ".json";
+            File issueJSONFile = new File(outputFilename);
+
+            if (!issueJSONFile.exists()) {
+                String issueURL = "https://bugzilla.mozilla.org/rest/bug/" + issue.getBugID() + "/comment";
+
+
+                Process p = Runtime.getRuntime().exec("curl " + issueURL);
+
+                InputStream stdout = p.getInputStream();
+                BufferedReader reader = new BufferedReader(new InputStreamReader(stdout));
+                String jsonDocument = "";
+                String line = "";
+                while ((line = reader.readLine()) != null) {
+                    jsonDocument = jsonDocument + line;
+                }
+
+                p.waitFor();
+                saveDataToFile(jsonDocument, issueJSONFile);
+                logger.info("Downloaded JSON for issue " + issue.getBugID());
+                return true;
+            } else {
+                logger.info("Skipped Downloading JSON for issue " + issue.getBugID());
+                return false;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
     public void saveDataToFile(String data, File filename) {
@@ -92,16 +141,16 @@ public class Scraper {
     }
 
     /**
-     * extractIssueComments will extract the comments of an issue
+     * extractIssueCommentsFromXML will extract the comments of an issue
      * from an XML document
      *
      * @param issue the issue for which we wish to extract comments
      * @return an ArrayList containing each comment on the issue
      */
-    public ArrayList<FirefoxComment> extractIssueComments(FirefoxIssue issue) {
+    public ArrayList<FirefoxComment> extractIssueCommentsFromXML(FirefoxIssue issue) {
 
         ArrayList<FirefoxComment> comments = new ArrayList<>();
-        String issueFilename = issueDataLocation + issue.getBugID() + ".xml";
+        String issueFilename = issueXMLDataLocation + issue.getBugID() + ".xml";
 
         try {
             DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
@@ -124,6 +173,37 @@ public class Scraper {
             e.printStackTrace();
         }
 
+        logger.info("Extracted " + comments.size() + " comments for issue " + issue.getBugID());
+        return comments;
+    }
+
+    public ArrayList<FirefoxComment> extractIssueCommentsFromJSON(FirefoxIssue issue) {
+        ArrayList<FirefoxComment> comments = new ArrayList<>();
+        String issueFilename = issueJSONDataLocation + issue.getBugID() + ".json";
+
+        String bugIDString = String.valueOf(issue.getBugID());
+
+        try {
+            // Read json from file
+            String rawJsonContent = new String(Files.readAllBytes(Paths.get(issueFilename)));
+            JsonObject jsonContent = new JsonParser().parse(rawJsonContent).getAsJsonObject();
+
+            JsonObject jsonBug = jsonContent.get("bugs").getAsJsonObject();
+            JsonObject jsonBugID = jsonBug.get(bugIDString).getAsJsonObject();
+            JsonArray jsonComments = jsonBugID.get("comments").getAsJsonArray();
+
+
+            for (int i = 0; i < jsonComments.size(); i++) {
+                FirefoxComment firefoxComment = new FirefoxComment();
+                JsonObject jsonComment = jsonComments.get(i).getAsJsonObject();
+                firefoxComment.setCommentText(jsonComment.get("raw_text").getAsString());
+                firefoxComment.setAuthorEmail(jsonComment.get("author").getAsString());
+                comments.add(firefoxComment);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         logger.info("Extracted " + comments.size() + " comments for issue " + issue.getBugID());
         return comments;
     }

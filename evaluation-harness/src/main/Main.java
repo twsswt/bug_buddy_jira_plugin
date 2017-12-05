@@ -136,9 +136,9 @@ class Main {
 
         for (int i = 0; i < maxIssuesToProcess; i++) {
             logger.info("Processing issue " + (i+1) + "/" + maxIssuesToProcess);
-            s.getIssueXML(issues.get(i), ("../project-issue-data/bugreport.mozilla.firefox/FirefoxIssueXML/"));
+            s.getIssueJSON(issues.get(i), ("../project-issue-data/bugreport.mozilla.firefox/FirefoxIssueJSON/"));
 
-            ArrayList<FirefoxComment> comments = s.extractIssueComments(issues.get(i));
+            ArrayList<FirefoxComment> comments = s.extractIssueCommentsFromJSON(issues.get(i));
             issues.get(i).setComments(comments);
         }
 
