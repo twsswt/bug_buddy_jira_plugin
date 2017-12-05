@@ -75,6 +75,13 @@ public class Converter {
     }
 
     public String convertCommentToJiraJSON(String comment) {
+
+        // Escape all quote characters in comment ( replace all " with \" )
+        comment = comment.replaceAll("\"", "\\\\\"");
+
+        // Escape all tab characters in comment
+        comment = comment.replaceAll("\t", "    ");
+
         return "{\n" +
                 "\"body\":\"" + comment + "\"\n" +
                 "}";

@@ -43,6 +43,7 @@ public class Sender {
     }
 
     public void sendPostCommand(String filename, String apiSection) {
+        String returnedJSON = "";
         try {
             String curlCommand = CURL_POST_PREFIX + issueJSONLocation + filename + CURL_POST_MIDFIX + this.jiraAPILocation + apiSection;
 
@@ -54,9 +55,14 @@ public class Sender {
             BufferedReader reader = new BufferedReader(new InputStreamReader(stdout));
             String line;
             while ((line = reader.readLine()) != null) {
+                returnedJSON = line;
                 logger.debug("Sending: " + line);
             }
 
+            if (returnedJSON.charAt(2) == 'e') {
+                logger.warn("Issue posting " + filename);
+                logger.warn(returnedJSON);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
