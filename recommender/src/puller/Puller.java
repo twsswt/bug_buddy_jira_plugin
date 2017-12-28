@@ -33,6 +33,7 @@ public class Puller {
         boolean pulledNewIssues;
 
         do {
+            System.out.println("Pulling block starting at: " + startAt);
             ArrayList<JiraIssue> newIssues = getIssueBlock(startAt);
             pulledNewIssues = newIssues.size() > 0;
             startAt += 100;
@@ -79,7 +80,9 @@ public class Puller {
             JsonObject jsonContent = new JsonParser().parse(returnedJSON).getAsJsonObject();
             JsonArray jsonIssues = jsonContent.get("issues").getAsJsonArray();
 
+            int counter = 0;
             for (JsonElement jsonIssue : jsonIssues) {
+                System.out.println("Pulling issue: " + (++counter));
                 issues.add(convertJsonIssueToJiraIssue(jsonIssue.getAsJsonObject()));
             }
 
@@ -92,8 +95,70 @@ public class Puller {
 
     public JiraIssue convertJsonIssueToJiraIssue(JsonObject jsonIssue) {
         JiraIssue jiraIssue = new JiraIssue();
+        JsonObject jsonFields = jsonIssue.get("fields").getAsJsonObject();
 
+        // Get ID
+        jiraIssue.id = jsonIssue.get("id").getAsString();
+
+        // Get reporter
+        JsonObject jsonReporter = jsonFields.get("reporter").getAsJsonObject();
+        jiraIssue.reporter = jsonReporter.get("name").getAsString();
+
+        // Get assignee
+        JsonObject jsonAssignee = jsonFields.get("assignee").getAsJsonObject();
+        jiraIssue.assignee = jsonAssignee.get("name").getAsString();
+
+
+        jiraIssue = addCommentsToIssue(jiraIssue);
         return jiraIssue;
+    }
+
+    public JiraIssue addCommentsToIssue(JiraIssue issue) {
+        JiraIssue newIssue = issue;
+
+        String curlPrefix = "curl -i -u admin:admin -H \"Accept: application/json\" -H \"Content-Type: application/json\" -X GET ";
+        String issueSearchQuery = "/issue/" + issue.id;
+        String curlCommand = curlPrefix + jiraAPILocation + issueSearchQuery;
+
+        try {
+            Process p = Runtime.getRuntime().exec(curlCommand);
+
+            InputStream stdout = p.getInputStream();
+            BufferedReader reader = new BufferedReader(new InputStreamReader(stdout));
+            String line, returnedJSON = "";
+            while ((line = reader.readLine()) != null) {
+                returnedJSON = line;
+            }
+
+            JsonObject jsonContent = new JsonParser().parse(returnedJSON).getAsJsonObject();
+
+            JsonObject jsonFields = jsonContent.get("fields").getAsJsonObject();
+            JsonObject jsonComment = jsonFields.get("comment").getAsJsonObject();
+            JsonArray jsonComments = jsonComment.get("comments").getAsJsonArray();
+
+            for (JsonElement comment : jsonComments) {
+                JiraComment newComment = new JiraComment();
+
+                String fullCommentBody = comment.getAsJsonObject().get("body").getAsString();
+
+                String[] commentContents = fullCommentBody.split("\n", 4);
+                String author = commentContents[0].replaceFirst("author: ","");
+                String date = commentContents[1].replaceFirst("created: ","");
+                String body = commentContents[3];
+
+                newComment.author = author;
+                newComment.date = date;
+                newComment.body = body;
+
+                newIssue.comments.add(newComment);
+            }
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return newIssue;
     }
 
 }
