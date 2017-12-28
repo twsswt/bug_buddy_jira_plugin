@@ -1,6 +1,7 @@
 # Complition results
 jira-hello-world/myPlugin/target
 evaluation-harness/out
+recommender/out
 
 # IDE stuff
 .idea
@@ -9,3 +10,5 @@ evaluation-harness/out
 # Libraries
 evaluation-harness/lib
 
+# Data
+project-issue-data/*
