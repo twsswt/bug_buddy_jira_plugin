@@ -1,99 +1,93 @@
+import classifier.FrequencyTable;
+import classifier.FrequencyTableEntry;
+import classifier.User;
 import puller.JiraComment;
 import puller.JiraIssue;
 import puller.Puller;
-import weka.classifiers.Classifier;
-import weka.classifiers.evaluation.Evaluation;
-import weka.classifiers.trees.J48;
-import weka.core.Instances;
-import weka.core.converters.ConverterUtils.DataSource;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.util.ArrayList;
+import java.util.*;
 
 public class Main {
-
-    private static final String testCsvFilename = "test.csv";
-    private static final String trainingCsvFilename = "training.csv";
 
     public static void main(String[] args) {
         Puller p = new Puller("localhost", "2990");
         ArrayList<JiraIssue> jiraIssues = p.getAllIssues();
 
-        writeTestSetToCSV(jiraIssues);
-        writeTrainingSetToCSV(jiraIssues);
+        List<User> allUsers = identifyAllUsers(jiraIssues);
 
-        try {
-            DataSource testCsvSource = new DataSource(testCsvFilename);
-            DataSource trainingCsvSource = new DataSource(trainingCsvFilename);
-            Instances testData = testCsvSource.getDataSet();
-            Instances trainingData = trainingCsvSource.getDataSet();
-
-        } catch (Exception e) {
-            e.printStackTrace();
+        for (int i = 0; i < allUsers.size(); i++) {
+            buildFrequencyTable(allUsers.get(i), jiraIssues);
+            System.out.println("Built Frequency Table for user " + i);
         }
+
     }
 
-    public static void writeTestSetToCSV(ArrayList<JiraIssue> issues) {
-        try {
-            FileWriter writer = new FileWriter(new File(testCsvFilename));
+    public static void buildFrequencyTable(User user, ArrayList<JiraIssue> issues) {
+        // Get every word the user has ever said
+        StringBuilder everyWrittenWordBuilder = new StringBuilder();
 
-            writer.write("Reporter,Assignee,AllCommentText\n");
-
-            for (JiraIssue issue: issues) {
-                StringBuilder line = new StringBuilder();
-                line.append(issue.reporter);
-                line.append(",");
-                line.append(issue.assignee);
-                line.append(",");
-
-                StringBuilder allComments = new StringBuilder();
-                for (JiraComment comment: issue.comments) {
-                    String commentBody = comment.body;
-                    commentBody = commentBody.replace(',', ' ');
-                    commentBody = commentBody.replace('\n', ' ');
-                    allComments.append(commentBody);
-                }
-
-                line.append(allComments);
-                line.append("\n");
-
-                writer.write(line.toString());
+        for (JiraIssue issue : issues) {
+            if (issue.assignee.equals(user.email)) {
+                everyWrittenWordBuilder.append(issue.text).append(" ");
             }
-        } catch (Exception e) {
-            e.printStackTrace();
+
+            for (JiraComment comment : issue.comments) {
+                if (comment.author.equals(user.email)) {
+                    everyWrittenWordBuilder.append(comment.body).append(" ");
+                }
+            }
         }
+
+        // Remove all the whitespace and punctuation
+        String everyWrittenWord = everyWrittenWordBuilder.toString();
+        everyWrittenWord = everyWrittenWord.replace(',', ' ').replace('.', ' ').replace('(', ' ').replace(')', ' ');
+        everyWrittenWord = everyWrittenWord.replace('"', ' ').replace('>', ' ');
+        String[] allWordsArray = everyWrittenWord.split("\\s+");
+        List<String> allWords = Arrays.asList(allWordsArray);
+
+        // Get every unique word
+        Set<String> allUniqueWords = new HashSet<>(allWords);
+
+        FrequencyTable table = new FrequencyTable();
+
+        // Get Frequencies
+        for (String uniqueWord : allUniqueWords) {
+            int numOccurrences = 0;
+            for (String word : allWords) {
+                if (word.equals(uniqueWord)) {
+                    numOccurrences++;
+                }
+            }
+
+            FrequencyTableEntry entry = new FrequencyTableEntry(uniqueWord, numOccurrences);
+
+            table.entries.add(entry);
+        }
+
+        user.wordTable = table;
     }
 
-    public static void writeTrainingSetToCSV(ArrayList<JiraIssue> issues) {
-        try {
-            FileWriter writer = new FileWriter(new File(trainingCsvFilename));
+    public static List<User> identifyAllUsers(ArrayList<JiraIssue> issues) {
+        // Find all Unique Emails
+        Set<String> allUniqueEmails = new HashSet<>();
+        for (JiraIssue issue : issues) {
+            allUniqueEmails.add(issue.reporter);
+            allUniqueEmails.add(issue.assignee);
 
-            writer.write("Reporter,Assignee,AllCommentText\n");
-
-            for (int i = 1; i < issues.size(); i++) {
-                JiraIssue issue = issues.get(i);
-                StringBuilder line = new StringBuilder();
-                line.append(issue.reporter);
-                line.append(",");
-                line.append(issue.assignee);
-                line.append(",");
-
-                StringBuilder allComments = new StringBuilder();
-                for (JiraComment comment: issue.comments) {
-                    String commentBody = comment.body;
-                    commentBody = commentBody.replace(',', ' ');
-                    commentBody = commentBody.replace('\n', ' ');
-                    allComments.append(commentBody);
-                }
-
-                line.append(allComments);
-                line.append("\n");
-
-                writer.write(line.toString());
+            for (JiraComment comment : issue.comments) {
+                allUniqueEmails.add(comment.author);
             }
-        } catch (Exception e) {
-            e.printStackTrace();
         }
+
+        // Create a list of user objects using all unique emails
+        List<User> allUsers = new ArrayList<>();
+        for (String email : allUniqueEmails) {
+            User u = new User();
+            u.email = email;
+            u.wordTable = new FrequencyTable();
+            allUsers.add(u);
+        }
+
+        return allUsers;
     }
 }
