@@ -10,15 +10,59 @@ import java.util.*;
 public class Main {
 
     public static void main(String[] args) {
+        // Get all issues
         Puller p = new Puller("localhost", "2990");
         ArrayList<JiraIssue> jiraIssues = p.getAllIssues();
 
+        // Build all frequency tables
         List<User> allUsers = identifyAllUsers(jiraIssues);
 
         for (int i = 0; i < allUsers.size(); i++) {
             buildFrequencyTable(allUsers.get(i), jiraIssues);
             System.out.println("Built Frequency Table for user " + i);
         }
+
+        // Test input
+        System.out.print("Enter an issue: ");
+        StringBuilder issueText = new StringBuilder();
+        Scanner reader = new Scanner(System.in);
+        while (reader.hasNextLine()) {
+            issueText.append(reader.nextLine());
+        }
+        reader.close();
+
+        // Build frequency table for input
+        JiraIssue newIssue = new JiraIssue();
+        newIssue.text = issueText.toString();
+        newIssue.assignee = "newissue@newissue.com";
+        ArrayList<JiraIssue> newIssueList = new ArrayList<>();
+        newIssueList.add(newIssue);
+        User newUser = new User();
+        newUser.email = "newissue@newissue.com";
+
+        buildFrequencyTable(newUser, newIssueList);
+
+        System.out.println(newUser.wordTable);
+
+        // Find the closest match between our new frequency table and all other frequency tables...
+        FrequencyTable issueTable = newUser.wordTable;
+
+        double maxMatch = 0;
+        int maxIndex = 0;
+
+        for (int i = 0; i < allUsers.size(); i++) {
+            double similarity = issueTable.compareSimilarity(allUsers.get(i).wordTable);
+            System.out.println("i: " + i + " sim " + similarity);
+            if (similarity > maxMatch) {
+                maxMatch = similarity;
+                maxIndex = i;
+            }
+        }
+
+        System.out.println("Max match: " + maxMatch);
+        System.out.println("Max index: " + maxIndex);
+        System.out.println("We Recommend you assign this issue to");
+        System.out.println(allUsers.get(maxIndex).email);
 
     }
 
