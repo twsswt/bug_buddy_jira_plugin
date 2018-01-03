@@ -25,6 +25,11 @@ public class Puller {
         this.jiraAPILocation = "http://" + jiraIP + ":" + jiraPort + "/jira/rest/api/2";
     }
 
+    /**
+     * Gets all issues from the current jira instance
+     *
+     * @return an array list containing all jira issues
+     */
     public ArrayList<JiraIssue> getAllIssues() {
         ArrayList<JiraIssue> issues = new ArrayList<>();
 
@@ -54,13 +59,7 @@ public class Puller {
      */
     public ArrayList<JiraIssue> getIssueBlock(int startAt) {
 
-        // This is returned when there are no issues left
-        // {
-        //   "startAt": 0,
-        //   "maxResults": 50,
-        //   "total": 100,
-        //   "issues": []
-        // }
+
         ArrayList<JiraIssue> issues = new ArrayList<>();
 
         String curlPrefix = "curl -i -u admin:admin -H \"Accept: application/json\" -H \"Content-Type: application/json\" -X GET ";
@@ -93,6 +92,9 @@ public class Puller {
         return issues;
     }
 
+    /**
+     * Converts an issue downloaded via the REST API into an internal JiraIssue type
+     */
     public JiraIssue convertJsonIssueToJiraIssue(JsonObject jsonIssue) {
         JiraIssue jiraIssue = new JiraIssue();
         JsonObject jsonFields = jsonIssue.get("fields").getAsJsonObject();
@@ -113,6 +115,9 @@ public class Puller {
         return jiraIssue;
     }
 
+    /**
+     * Downloads each of the comments for an issue, and adds them to the internal representation
+     */
     public JiraIssue addCommentsToIssue(JiraIssue issue) {
         JiraIssue newIssue = issue;
 
