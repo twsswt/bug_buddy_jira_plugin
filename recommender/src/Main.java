@@ -33,24 +33,24 @@ public class Main {
 
         // Build frequency table for test issue
         JiraIssue newIssue = new JiraIssue();
-        newIssue.text = issueText.toString();
-        newIssue.assignee = "newissue@newissue.com";
+        newIssue.setText(issueText.toString());
+        newIssue.setAssignee("newissue@newissue.com");
         ArrayList<JiraIssue> newIssueList = new ArrayList<>();
         newIssueList.add(newIssue);
         User newUser = new User();
-        newUser.email = "newissue@newissue.com";
+        newUser.setEmail("newissue@newissue.com");
         buildFrequencyTable(newUser, newIssueList);
 
-        System.out.println(newUser.wordTable);
+        System.out.println(newUser.getWordTable());
 
         // Find the closest match between our new frequency table and all other frequency tables...
-        FrequencyTable issueTable = newUser.wordTable;
+        FrequencyTable issueTable = newUser.getWordTable();
 
         double maxMatch = 0;
         int maxIndex = 0;
 
         for (int i = 0; i < allUsers.size(); i++) {
-            double similarity = issueTable.compareSimilarity(allUsers.get(i).wordTable);
+            double similarity = issueTable.compareSimilarity(allUsers.get(i).getWordTable());
             System.out.println("i: " + i + " sim " + similarity);
 
             if (similarity > maxMatch) {
@@ -62,7 +62,7 @@ public class Main {
         System.out.println("Max match: " + maxMatch);
         System.out.println("Max index: " + maxIndex);
         System.out.println("We Recommend you assign this issue to");
-        System.out.println(allUsers.get(maxIndex).email);
+        System.out.println(allUsers.get(maxIndex).getEmail());
 
     }
 
@@ -75,13 +75,13 @@ public class Main {
         StringBuilder everyWrittenWordBuilder = new StringBuilder();
 
         for (JiraIssue issue : issues) {
-            if (issue.assignee.equals(user.email)) {
-                everyWrittenWordBuilder.append(issue.text).append(" ");
+            if (issue.getAssignee().equals(user.getEmail())) {
+                everyWrittenWordBuilder.append(issue.getText()).append(" ");
             }
 
-            for (JiraComment comment : issue.comments) {
-                if (comment.author.equals(user.email)) {
-                    everyWrittenWordBuilder.append(comment.body).append(" ");
+            for (JiraComment comment : issue.getComments()) {
+                if (comment.getAuthor().equals(user.getEmail())) {
+                    everyWrittenWordBuilder.append(comment.getBody()).append(" ");
                 }
             }
         }
@@ -110,10 +110,10 @@ public class Main {
 
             FrequencyTableEntry entry = new FrequencyTableEntry(uniqueWord, numOccurrences);
 
-            table.entries.add(entry);
+            table.getEntries().add(entry);
         }
 
-        user.wordTable = table;
+        user.setWordTable(table);
     }
 
     /**
@@ -125,11 +125,11 @@ public class Main {
         // Find all Unique Emails
         Set<String> allUniqueEmails = new HashSet<>();
         for (JiraIssue issue : issues) {
-            allUniqueEmails.add(issue.reporter);
-            allUniqueEmails.add(issue.assignee);
+            allUniqueEmails.add(issue.getReporter());
+            allUniqueEmails.add(issue.getAssignee());
 
-            for (JiraComment comment : issue.comments) {
-                allUniqueEmails.add(comment.author);
+            for (JiraComment comment : issue.getComments()) {
+                allUniqueEmails.add(comment.getAuthor());
             }
         }
 
@@ -137,8 +137,8 @@ public class Main {
         List<User> allUsers = new ArrayList<>();
         for (String email : allUniqueEmails) {
             User u = new User();
-            u.email = email;
-            u.wordTable = new FrequencyTable();
+            u.setEmail(email);
+            u.setWordTable(new FrequencyTable());
             allUsers.add(u);
         }
 
