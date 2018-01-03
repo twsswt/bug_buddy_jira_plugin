@@ -10,7 +10,7 @@ import java.util.*;
 public class Main {
 
     public static void main(String[] args) {
-        // Get all issues
+        // Get all issues from a jira instance
         Puller p = new Puller("localhost", "2990");
         ArrayList<JiraIssue> jiraIssues = p.getAllIssues();
 
@@ -22,7 +22,7 @@ public class Main {
             System.out.println("Built Frequency Table for user " + i);
         }
 
-        // Test input
+        // Input a test issue, to be automatically assigned to a user
         System.out.print("Enter an issue: ");
         StringBuilder issueText = new StringBuilder();
         Scanner reader = new Scanner(System.in);
@@ -31,7 +31,7 @@ public class Main {
         }
         reader.close();
 
-        // Build frequency table for input
+        // Build frequency table for test issue
         JiraIssue newIssue = new JiraIssue();
         newIssue.text = issueText.toString();
         newIssue.assignee = "newissue@newissue.com";
@@ -39,7 +39,6 @@ public class Main {
         newIssueList.add(newIssue);
         User newUser = new User();
         newUser.email = "newissue@newissue.com";
-
         buildFrequencyTable(newUser, newIssueList);
 
         System.out.println(newUser.wordTable);
@@ -53,6 +52,7 @@ public class Main {
         for (int i = 0; i < allUsers.size(); i++) {
             double similarity = issueTable.compareSimilarity(allUsers.get(i).wordTable);
             System.out.println("i: " + i + " sim " + similarity);
+
             if (similarity > maxMatch) {
                 maxMatch = similarity;
                 maxIndex = i;
@@ -66,6 +66,10 @@ public class Main {
 
     }
 
+
+    /**
+     * Builds the frequency table for a single user for a collection of issues
+     */
     public static void buildFrequencyTable(User user, ArrayList<JiraIssue> issues) {
         // Get every word the user has ever said
         StringBuilder everyWrittenWordBuilder = new StringBuilder();
@@ -86,15 +90,16 @@ public class Main {
         String everyWrittenWord = everyWrittenWordBuilder.toString();
         everyWrittenWord = everyWrittenWord.replace(',', ' ').replace('.', ' ').replace('(', ' ').replace(')', ' ');
         everyWrittenWord = everyWrittenWord.replace('"', ' ').replace('>', ' ');
+
+        // Get every unique word the user has ever said
         String[] allWordsArray = everyWrittenWord.split("\\s+");
         List<String> allWords = Arrays.asList(allWordsArray);
 
-        // Get every unique word
         Set<String> allUniqueWords = new HashSet<>(allWords);
 
+        // Get the frequencies of all unique words
         FrequencyTable table = new FrequencyTable();
 
-        // Get Frequencies
         for (String uniqueWord : allUniqueWords) {
             int numOccurrences = 0;
             for (String word : allWords) {
@@ -111,6 +116,11 @@ public class Main {
         user.wordTable = table;
     }
 
+    /**
+     * Identify all the users in a collection of issues
+     *
+     * @return A list of users involved in the issue collection
+     */
     public static List<User> identifyAllUsers(ArrayList<JiraIssue> issues) {
         // Find all Unique Emails
         Set<String> allUniqueEmails = new HashSet<>();
