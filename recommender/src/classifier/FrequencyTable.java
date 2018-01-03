@@ -21,7 +21,7 @@ public class FrequencyTable {
     public double compareSimilarity(FrequencyTable other) {
         List<Double> percentages = new ArrayList<>();
 
-        for (FrequencyTableEntry entry: this.entries) {
+        for (FrequencyTableEntry entry : this.entries) {
             FrequencyTableEntry matchedEntry = other.getEntryWithWord(entry.word);
             if (matchedEntry == null) {
                 percentages.add(0.0);
@@ -42,7 +42,7 @@ public class FrequencyTable {
     }
 
     public FrequencyTableEntry getEntryWithWord(String word) {
-        for (FrequencyTableEntry entry: entries) {
+        for (FrequencyTableEntry entry : entries) {
             if (entry.word.equals(word)) {
                 return entry;
             }

@@ -4,6 +4,12 @@ import java.util.ArrayList;
 
 public class JiraIssue {
 
+    public String text = "DOOT DOOT";
+    public String reporter = "DOOT DOOT";
+    public String assignee = "DOOT DOOT";
+    public String id = "DOOT DOOT";
+    public ArrayList<JiraComment> comments = new ArrayList<>();
+
     @Override
     public String toString() {
         return "JiraIssue{" +
@@ -14,10 +20,4 @@ public class JiraIssue {
                 ", comments=" + comments +
                 '}';
     }
-
-    public String text = "DOOT DOOT";
-    public String reporter = "DOOT DOOT";
-    public String assignee = "DOOT DOOT";
-    public String id = "DOOT DOOT";
-    public ArrayList<JiraComment> comments = new ArrayList<>();
 }

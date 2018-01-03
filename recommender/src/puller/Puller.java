@@ -6,7 +6,6 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
@@ -45,10 +44,11 @@ public class Puller {
 
     /**
      * getIssueBlock will return a chunk of 100 issues from JIRA
-     *
-     *
+     * <p>
+     * <p>
      * This function is required, as JIRA only allows 100 results per search
      * See: https://jira.atlassian.com/browse/JRACLOUD-67570
+     *
      * @param startAt the index to start at - 0 for first batch, 100 for second, etc
      * @return An arrayList containing 100 jira issues
      */
@@ -142,8 +142,8 @@ public class Puller {
                 String fullCommentBody = comment.getAsJsonObject().get("body").getAsString();
 
                 String[] commentContents = fullCommentBody.split("\n", 4);
-                String author = commentContents[0].replaceFirst("author: ","");
-                String date = commentContents[1].replaceFirst("created: ","");
+                String author = commentContents[0].replaceFirst("author: ", "");
+                String date = commentContents[1].replaceFirst("created: ", "");
                 String body = commentContents[3];
 
                 newComment.author = author;
