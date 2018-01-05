@@ -44,10 +44,10 @@ public class FrequencyTable {
             } else {
 
                 // Calculate each frequency as a percentage of their overall occurrences
-                double thisFrequencyPercentage = (entry.getFrequency() / (double) this.entries.size()) / 100;
-                double otherFrequencyPercentage = (matchedEntry.getFrequency() / (double) other.entries.size()) / 100;
-                double averageFrequencyPercentage = (thisFrequencyPercentage + otherFrequencyPercentage) / 2.0;
-                percentages.add(averageFrequencyPercentage);
+                double thisWordFrequencyPercentage = (entry.getFrequency() / (double) this.entries.size()) / 100;
+                double otherWordFrequencyPercentage = (matchedEntry.getFrequency() / (double) other.entries.size()) / 100;
+                double averageWordFrequencyPercentage = (thisWordFrequencyPercentage + otherWordFrequencyPercentage) / 2.0;
+                percentages.add(averageWordFrequencyPercentage);
             }
         }
 
