@@ -1,3 +1,5 @@
+package main;
+
 import classifier.FrequencyTable;
 import classifier.User;
 import puller.JiraComment;
