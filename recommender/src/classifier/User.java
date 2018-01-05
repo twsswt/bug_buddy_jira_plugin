@@ -39,23 +39,10 @@ public class User {
      * Builds the frequency table for a collection of issues
      */
     public void buildFrequencyTable(List<JiraIssue> issues) {
-        // Get every word the user has ever said
-        StringBuilder everyWrittenWordBuilder = new StringBuilder();
-
-        for (JiraIssue issue : issues) {
-            if (issue.getAssignee().equals(this.getEmail())) {
-                everyWrittenWordBuilder.append(issue.getText()).append(" ");
-            }
-
-            for (JiraComment comment : issue.getComments()) {
-                if (comment.getAuthor().equals(this.getEmail())) {
-                    everyWrittenWordBuilder.append(comment.getBody()).append(" ");
-                }
-            }
-        }
+        // Get every word the user has ever written
+        String everyWrittenWord = getAllWords(issues);
 
         // Remove all the whitespace and punctuation
-        String everyWrittenWord = everyWrittenWordBuilder.toString();
         everyWrittenWord = everyWrittenWord.replace(',', ' ').replace('.', ' ').replace('(', ' ').replace(')', ' ');
         everyWrittenWord = everyWrittenWord.replace('"', ' ').replace('>', ' ');
 
@@ -82,5 +69,27 @@ public class User {
         }
 
         this.setWordTable(table);
+    }
+
+    /**
+     * Gets every word the user has ever written as a
+     * space seperated string
+     */
+    public String getAllWords(List<JiraIssue> issues) {
+        StringBuilder everyWrittenWordBuilder = new StringBuilder();
+
+        for (JiraIssue issue : issues) {
+            if (issue.getAssignee().equals(this.getEmail())) {
+                everyWrittenWordBuilder.append(issue.getText()).append(" ");
+            }
+
+            for (JiraComment comment : issue.getComments()) {
+                if (comment.getAuthor().equals(this.getEmail())) {
+                    everyWrittenWordBuilder.append(comment.getBody()).append(" ");
+                }
+            }
+        }
+
+        return everyWrittenWordBuilder.toString();
     }
 }
