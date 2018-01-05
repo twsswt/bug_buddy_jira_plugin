@@ -4,12 +4,20 @@ import java.util.ArrayList;
 
 public class JiraIssue {
 
-    private String text = "DOOT DOOT";
-    private String reporter = "DOOT DOOT";
-    private String assignee = "DOOT DOOT";
-    private String id = "DOOT DOOT";
-    private ArrayList<JiraComment> comments = new ArrayList<>();
+    private String text;
+    private String reporter;
+    private String assignee;
+    private String id;
+    private ArrayList<JiraComment> comments;
 
+    public JiraIssue() {
+        text = "N/A";
+        reporter = "N/A";
+        assignee = "N/A";
+        id = "N/A";
+        comments = new ArrayList<>();
+    }
+    
     public String getText() {
         return text;
     }
