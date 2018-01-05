@@ -100,15 +100,15 @@ public class Puller {
         JsonObject jsonFields = jsonIssue.get("fields").getAsJsonObject();
 
         // Get ID
-        jiraIssue.id = jsonIssue.get("id").getAsString();
+        jiraIssue.setId(jsonIssue.get("id").getAsString());
 
         // Get reporter
         JsonObject jsonReporter = jsonFields.get("reporter").getAsJsonObject();
-        jiraIssue.reporter = jsonReporter.get("name").getAsString();
+        jiraIssue.setReporter(jsonReporter.get("name").getAsString());
 
         // Get assignee
         JsonObject jsonAssignee = jsonFields.get("assignee").getAsJsonObject();
-        jiraIssue.assignee = jsonAssignee.get("name").getAsString();
+        jiraIssue.setAssignee(jsonAssignee.get("name").getAsString());
 
 
         jiraIssue = addCommentsToIssue(jiraIssue);
@@ -122,7 +122,7 @@ public class Puller {
         JiraIssue newIssue = issue;
 
         String curlPrefix = "curl -i -u admin:admin -H \"Accept: application/json\" -H \"Content-Type: application/json\" -X GET ";
-        String issueSearchQuery = "/issue/" + issue.id;
+        String issueSearchQuery = "/issue/" + issue.getId();
         String curlCommand = curlPrefix + jiraAPILocation + issueSearchQuery;
 
         try {
@@ -151,11 +151,11 @@ public class Puller {
                 String date = commentContents[1].replaceFirst("created: ", "");
                 String body = commentContents[3];
 
-                newComment.author = author;
-                newComment.date = date;
-                newComment.body = body;
+                newComment.setAuthor(author);
+                newComment.setDate(date);
+                newComment.setBody(body);
 
-                newIssue.comments.add(newComment);
+                newIssue.getComments().add(newComment);
             }
 
 

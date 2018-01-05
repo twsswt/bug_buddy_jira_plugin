@@ -1,8 +1,24 @@
 package classifier;
 
 public class User {
-    public String email;
-    public FrequencyTable wordTable;
+    private String email;
+    private FrequencyTable wordTable;
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public FrequencyTable getWordTable() {
+        return wordTable;
+    }
+
+    public void setWordTable(FrequencyTable wordTable) {
+        this.wordTable = wordTable;
+    }
 
     @Override
     public String toString() {
