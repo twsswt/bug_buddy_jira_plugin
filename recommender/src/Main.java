@@ -1,5 +1,4 @@
 import classifier.FrequencyTable;
-import classifier.FrequencyTableEntry;
 import classifier.User;
 import puller.JiraComment;
 import puller.JiraIssue;
@@ -16,11 +15,7 @@ public class Main {
 
         // Build all frequency tables
         List<User> allUsers = identifyAllUsers(jiraIssues);
-
-        for (int i = 0; i < allUsers.size(); i++) {
-            buildFrequencyTable(allUsers.get(i), jiraIssues);
-            System.out.println("Built Frequency Table for user " + i);
-        }
+        buildAllFrequencyTables(allUsers, jiraIssues);
 
         // Input a test issue, to be automatically assigned to a user
         System.out.print("Enter an issue: ");
@@ -35,85 +30,10 @@ public class Main {
         JiraIssue newIssue = new JiraIssue();
         newIssue.setText(issueText.toString());
         newIssue.setAssignee("newissue@newissue.com");
-        ArrayList<JiraIssue> newIssueList = new ArrayList<>();
-        newIssueList.add(newIssue);
-        User newUser = new User();
-        newUser.setEmail("newissue@newissue.com");
-        buildFrequencyTable(newUser, newIssueList);
-
-        System.out.println(newUser.getWordTable());
 
         // Find the closest match between our new frequency table and all other frequency tables...
-        FrequencyTable issueTable = newUser.getWordTable();
+        findClosestMatch(newIssue, allUsers);
 
-        double maxMatch = 0;
-        int maxIndex = 0;
-
-        for (int i = 0; i < allUsers.size(); i++) {
-            double similarity = issueTable.compareSimilarity(allUsers.get(i).getWordTable());
-            System.out.println("i: " + i + " sim " + similarity);
-
-            if (similarity > maxMatch) {
-                maxMatch = similarity;
-                maxIndex = i;
-            }
-        }
-
-        System.out.println("Max match: " + maxMatch);
-        System.out.println("Max index: " + maxIndex);
-        System.out.println("We Recommend you assign this issue to");
-        System.out.println(allUsers.get(maxIndex).getEmail());
-
-    }
-
-
-    /**
-     * Builds the frequency table for a single user for a collection of issues
-     */
-    public static void buildFrequencyTable(User user, ArrayList<JiraIssue> issues) {
-        // Get every word the user has ever said
-        StringBuilder everyWrittenWordBuilder = new StringBuilder();
-
-        for (JiraIssue issue : issues) {
-            if (issue.getAssignee().equals(user.getEmail())) {
-                everyWrittenWordBuilder.append(issue.getText()).append(" ");
-            }
-
-            for (JiraComment comment : issue.getComments()) {
-                if (comment.getAuthor().equals(user.getEmail())) {
-                    everyWrittenWordBuilder.append(comment.getBody()).append(" ");
-                }
-            }
-        }
-
-        // Remove all the whitespace and punctuation
-        String everyWrittenWord = everyWrittenWordBuilder.toString();
-        everyWrittenWord = everyWrittenWord.replace(',', ' ').replace('.', ' ').replace('(', ' ').replace(')', ' ');
-        everyWrittenWord = everyWrittenWord.replace('"', ' ').replace('>', ' ');
-
-        // Get every unique word the user has ever said
-        String[] allWordsArray = everyWrittenWord.split("\\s+");
-        List<String> allWords = Arrays.asList(allWordsArray);
-
-        Set<String> allUniqueWords = new HashSet<>(allWords);
-
-        // Get the frequencies of all unique words
-        FrequencyTable table = new FrequencyTable();
-
-        for (String uniqueWord : allUniqueWords) {
-            int numOccurrences = 0;
-            for (String word : allWords) {
-                if (word.equals(uniqueWord)) {
-                    numOccurrences++;
-                }
-            }
-
-            FrequencyTableEntry entry = new FrequencyTableEntry(uniqueWord, numOccurrences);
-
-            table.getEntries().add(entry);
-        }
-
-        user.setWordTable(table);
     }
 
     /**
@@ -143,5 +63,54 @@ public class Main {
         }
 
         return allUsers;
+    }
+
+    /**
+     * Builds a frequency table for all users
+     */
+    public static void buildAllFrequencyTables(List<User> users, List<JiraIssue> issues) {
+        for (int i = 0; i < users.size(); i++) {
+            users.get(i).buildFrequencyTable(issues);
+            System.out.println("Built Frequency Table for user " + i);
+        }
+    }
+
+    /**
+     * Finds the closest match between an issue and a list of users, by
+     * making use of their frequency tables
+     */
+    public static void findClosestMatch(JiraIssue issue, List<User> users) {
+
+        // Build an issue list and a user for the issue
+        // This is to deal with the coupling between users and frequency tables
+        ArrayList<JiraIssue> issueList = new ArrayList<>();
+        issueList.add(issue);
+        User issueUser = new User();
+        issueUser.setEmail("newissue@newissue.com");
+        issueUser.buildFrequencyTable(issueList);
+
+        FrequencyTable issueTable = issueUser.getWordTable();
+
+
+        // Identify the best match between the issues frequency table and all other frequency tables
+        double maxMatch = 0;
+        int maxIndex = 0;
+
+        for (int i = 0; i < users.size(); i++) {
+            double similarity = issueTable.compareSimilarity(users.get(i).getWordTable());
+            System.out.println("i: " + i + " sim " + similarity);
+
+            if (similarity > maxMatch) {
+                maxMatch = similarity;
+                maxIndex = i;
+            }
+        }
+
+        // Output the results
+        System.out.println("Max match: " + maxMatch);
+        System.out.println("Max index: " + maxIndex);
+        System.out.println("We Recommend you assign this issue to");
+        System.out.println(users.get(maxIndex).getEmail());
+
     }
 }
