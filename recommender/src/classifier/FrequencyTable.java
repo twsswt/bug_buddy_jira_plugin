@@ -3,6 +3,10 @@ package classifier;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * A FrequencyTable provides a list of Strings, along with the number
+ * of times they appear
+ */
 public class FrequencyTable {
 
     private ArrayList<FrequencyTableEntry> entries;
