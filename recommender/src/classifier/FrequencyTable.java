@@ -71,4 +71,11 @@ public class FrequencyTable {
 
         return null;
     }
+
+    /**
+     * Adds an entry to the table
+     */
+    public void addEntry(FrequencyTableEntry entry) {
+        entries.add(entry);
+    }
 }
