@@ -82,4 +82,15 @@ public class FrequencyTable {
     public void addEntry(FrequencyTableEntry entry) {
         entries.add(entry);
     }
+
+    /**
+     * Gets the total number of words in this frequency table
+     */
+    public int getTotalWords() {
+        int total = 0;
+        for (FrequencyTableEntry entry : entries) {
+            total += entry.getFrequency();
+        }
+        return total;
+    }
 }
