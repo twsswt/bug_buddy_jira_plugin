@@ -6,7 +6,6 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
@@ -26,6 +25,11 @@ public class Puller {
         this.jiraAPILocation = "http://" + jiraIP + ":" + jiraPort + "/jira/rest/api/2";
     }
 
+    /**
+     * Gets all issues from the current jira instance
+     *
+     * @return an array list containing all jira issues
+     */
     public ArrayList<JiraIssue> getAllIssues() {
         ArrayList<JiraIssue> issues = new ArrayList<>();
 
@@ -45,22 +49,17 @@ public class Puller {
 
     /**
      * getIssueBlock will return a chunk of 100 issues from JIRA
-     *
-     *
+     * <p>
+     * <p>
      * This function is required, as JIRA only allows 100 results per search
      * See: https://jira.atlassian.com/browse/JRACLOUD-67570
+     *
      * @param startAt the index to start at - 0 for first batch, 100 for second, etc
      * @return An arrayList containing 100 jira issues
      */
-    public ArrayList<JiraIssue> getIssueBlock(int startAt) {
+    private ArrayList<JiraIssue> getIssueBlock(int startAt) {
 
-        // This is returned when there are no issues left
-        // {
-        //   "startAt": 0,
-        //   "maxResults": 50,
-        //   "total": 100,
-        //   "issues": []
-        // }
+
         ArrayList<JiraIssue> issues = new ArrayList<>();
 
         String curlPrefix = "curl -i -u admin:admin -H \"Accept: application/json\" -H \"Content-Type: application/json\" -X GET ";
@@ -93,31 +92,36 @@ public class Puller {
         return issues;
     }
 
-    public JiraIssue convertJsonIssueToJiraIssue(JsonObject jsonIssue) {
+    /**
+     * Converts an issue downloaded via the REST API into an internal JiraIssue type
+     */
+    private JiraIssue convertJsonIssueToJiraIssue(JsonObject jsonIssue) {
         JiraIssue jiraIssue = new JiraIssue();
         JsonObject jsonFields = jsonIssue.get("fields").getAsJsonObject();
 
         // Get ID
-        jiraIssue.id = jsonIssue.get("id").getAsString();
+        jiraIssue.setId(jsonIssue.get("id").getAsString());
 
         // Get reporter
         JsonObject jsonReporter = jsonFields.get("reporter").getAsJsonObject();
-        jiraIssue.reporter = jsonReporter.get("name").getAsString();
+        jiraIssue.setReporter(jsonReporter.get("name").getAsString());
 
         // Get assignee
         JsonObject jsonAssignee = jsonFields.get("assignee").getAsJsonObject();
-        jiraIssue.assignee = jsonAssignee.get("name").getAsString();
+        jiraIssue.setAssignee(jsonAssignee.get("name").getAsString());
 
 
         jiraIssue = addCommentsToIssue(jiraIssue);
         return jiraIssue;
     }
 
-    public JiraIssue addCommentsToIssue(JiraIssue issue) {
-        JiraIssue newIssue = issue;
+    /**
+     * Downloads each of the comments for an issue, and adds them to the internal representation
+     */
+    private JiraIssue addCommentsToIssue(JiraIssue issue) {
 
         String curlPrefix = "curl -i -u admin:admin -H \"Accept: application/json\" -H \"Content-Type: application/json\" -X GET ";
-        String issueSearchQuery = "/issue/" + issue.id;
+        String issueSearchQuery = "/issue/" + issue.getId();
         String curlCommand = curlPrefix + jiraAPILocation + issueSearchQuery;
 
         try {
@@ -142,15 +146,15 @@ public class Puller {
                 String fullCommentBody = comment.getAsJsonObject().get("body").getAsString();
 
                 String[] commentContents = fullCommentBody.split("\n", 4);
-                String author = commentContents[0].replaceFirst("author: ","");
-                String date = commentContents[1].replaceFirst("created: ","");
+                String author = commentContents[0].replaceFirst("author: ", "");
+                String date = commentContents[1].replaceFirst("created: ", "");
                 String body = commentContents[3];
 
-                newComment.author = author;
-                newComment.date = date;
-                newComment.body = body;
+                newComment.setAuthor(author);
+                newComment.setDate(date);
+                newComment.setBody(body);
 
-                newIssue.comments.add(newComment);
+                issue.getComments().add(newComment);
             }
 
 
@@ -158,7 +162,7 @@ public class Puller {
             e.printStackTrace();
         }
 
-        return newIssue;
+        return issue;
     }
 
 }
