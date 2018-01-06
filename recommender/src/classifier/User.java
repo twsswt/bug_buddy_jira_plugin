@@ -73,9 +73,9 @@ public class User {
 
     /**
      * Gets every word the user has ever written as a
-     * space seperated string
+     * space separated string
      */
-    public String getAllWords(List<JiraIssue> issues) {
+    private String getAllWords(List<JiraIssue> issues) {
         StringBuilder everyWrittenWordBuilder = new StringBuilder();
 
         for (JiraIssue issue : issues) {

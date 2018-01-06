@@ -43,7 +43,7 @@ public class Main {
      *
      * @return A list of users involved in the issue collection
      */
-    public static List<User> identifyAllUsers(ArrayList<JiraIssue> issues) {
+    private static List<User> identifyAllUsers(ArrayList<JiraIssue> issues) {
         // Find all Unique Emails
         Set<String> allUniqueEmails = new HashSet<>();
         for (JiraIssue issue : issues) {
@@ -70,7 +70,7 @@ public class Main {
     /**
      * Builds a frequency table for all users
      */
-    public static void buildAllFrequencyTables(List<User> users, List<JiraIssue> issues) {
+    private static void buildAllFrequencyTables(List<User> users, List<JiraIssue> issues) {
         for (int i = 0; i < users.size(); i++) {
             users.get(i).buildFrequencyTable(issues);
             System.out.println("Built Frequency Table for user " + i);
@@ -81,7 +81,7 @@ public class Main {
      * Finds the closest match between an issue and a list of users, by
      * making use of their frequency tables
      */
-    public static void findClosestMatch(JiraIssue issue, List<User> users) {
+    private static void findClosestMatch(JiraIssue issue, List<User> users) {
 
         // Build an issue list and a user for the issue
         // This is to deal with the coupling between users and frequency tables

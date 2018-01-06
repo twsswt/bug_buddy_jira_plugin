@@ -62,7 +62,7 @@ public class FrequencyTable {
     /**
      * Gets the entry of the frequency table with the specified word
      */
-    public FrequencyTableEntry getEntryWithWord(String word) {
+    private FrequencyTableEntry getEntryWithWord(String word) {
         for (FrequencyTableEntry entry : entries) {
             if (entry.getWord().equals(word)) {
                 return entry;

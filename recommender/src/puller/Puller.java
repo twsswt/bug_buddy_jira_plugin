@@ -57,7 +57,7 @@ public class Puller {
      * @param startAt the index to start at - 0 for first batch, 100 for second, etc
      * @return An arrayList containing 100 jira issues
      */
-    public ArrayList<JiraIssue> getIssueBlock(int startAt) {
+    private ArrayList<JiraIssue> getIssueBlock(int startAt) {
 
 
         ArrayList<JiraIssue> issues = new ArrayList<>();
@@ -95,7 +95,7 @@ public class Puller {
     /**
      * Converts an issue downloaded via the REST API into an internal JiraIssue type
      */
-    public JiraIssue convertJsonIssueToJiraIssue(JsonObject jsonIssue) {
+    private JiraIssue convertJsonIssueToJiraIssue(JsonObject jsonIssue) {
         JiraIssue jiraIssue = new JiraIssue();
         JsonObject jsonFields = jsonIssue.get("fields").getAsJsonObject();
 
@@ -118,8 +118,7 @@ public class Puller {
     /**
      * Downloads each of the comments for an issue, and adds them to the internal representation
      */
-    public JiraIssue addCommentsToIssue(JiraIssue issue) {
-        JiraIssue newIssue = issue;
+    private JiraIssue addCommentsToIssue(JiraIssue issue) {
 
         String curlPrefix = "curl -i -u admin:admin -H \"Accept: application/json\" -H \"Content-Type: application/json\" -X GET ";
         String issueSearchQuery = "/issue/" + issue.getId();
@@ -155,7 +154,7 @@ public class Puller {
                 newComment.setDate(date);
                 newComment.setBody(body);
 
-                newIssue.getComments().add(newComment);
+                issue.getComments().add(newComment);
             }
 
 
@@ -163,7 +162,7 @@ public class Puller {
             e.printStackTrace();
         }
 
-        return newIssue;
+        return issue;
     }
 
 }
