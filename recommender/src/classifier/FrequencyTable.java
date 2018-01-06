@@ -39,6 +39,9 @@ public class FrequencyTable {
     public double compareSimilarity(FrequencyTable other) {
         List<Double> percentages = new ArrayList<>();
 
+        int thisTotalWords = this.getTotalWords();
+        int otherTotalWords = other.getTotalWords();
+
         for (FrequencyTableEntry entry : this.entries) {
             // attempt to find an entry with the same word in the other table
             // if no such entry exists then they have 0% similarity
@@ -48,19 +51,19 @@ public class FrequencyTable {
             } else {
 
                 // Calculate each frequency as a percentage of their overall occurrences
-                double thisWordFrequencyPercentage = (entry.getFrequency() / (double) this.entries.size()) / 100;
-                double otherWordFrequencyPercentage = (matchedEntry.getFrequency() / (double) other.entries.size()) / 100;
+                double thisWordFrequencyPercentage = entry.getFrequency() / (double) thisTotalWords;
+                double otherWordFrequencyPercentage = matchedEntry.getFrequency() / (double) otherTotalWords;
                 double averageWordFrequencyPercentage = (thisWordFrequencyPercentage + otherWordFrequencyPercentage) / 2.0;
                 percentages.add(averageWordFrequencyPercentage);
             }
         }
 
-        // Get average
+        // Get total similarity
         double total = 0.0;
         for (double percentage : percentages) {
             total += percentage;
         }
-        return total / (double) this.entries.size();
+        return total;
     }
 
     /**
