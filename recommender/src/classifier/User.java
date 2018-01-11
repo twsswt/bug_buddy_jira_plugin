@@ -39,34 +39,11 @@ public class User {
      * Builds the frequency table for a collection of issues
      */
     public void buildFrequencyTable(List<JiraIssue> issues) {
-        // Get every word the user has ever written
-        String everyWrittenWord = getAllWords(issues);
-
-        // Remove all the whitespace and punctuation
-        everyWrittenWord = everyWrittenWord.replace(',', ' ').replace('.', ' ').replace('(', ' ').replace(')', ' ');
-        everyWrittenWord = everyWrittenWord.replace('"', ' ').replace('>', ' ');
-
-        // Get every unique word the user has ever said
-        String[] allWordsArray = everyWrittenWord.split("\\s+");
-        List<String> allWords = Arrays.asList(allWordsArray);
-
-        Set<String> allUniqueWords = new HashSet<>(allWords);
+        Set<String> allUniqueWords = getAllUniqueWords(issues);
+        List<String> allWords = getAllWordsList(issues);
 
         // Get the frequencies of all unique words
-        FrequencyTable table = new FrequencyTable();
-
-        for (String uniqueWord : allUniqueWords) {
-            int numOccurrences = 0;
-            for (String word : allWords) {
-                if (word.equals(uniqueWord)) {
-                    numOccurrences++;
-                }
-            }
-
-            FrequencyTableEntry entry = new FrequencyTableEntry(uniqueWord, numOccurrences);
-
-            table.getEntries().add(entry);
-        }
+        FrequencyTable table = getFrequencyTableFromUniqueWords(allUniqueWords, allWords);
 
         this.setWordTable(table);
     }
@@ -91,5 +68,53 @@ public class User {
         }
 
         return everyWrittenWordBuilder.toString();
+    }
+
+    public List<String> getAllWordsList(List<JiraIssue> issues) {
+        // Get every word the user has ever written
+        String everyWrittenWord = getAllWords(issues);
+
+        // Remove all the whitespace and punctuation
+        everyWrittenWord = everyWrittenWord.replace(',', ' ').replace('.', ' ').replace('(', ' ').replace(')', ' ');
+        everyWrittenWord = everyWrittenWord.replace('"', ' ').replace('>', ' ');
+
+        // Get every unique word the user has ever said
+        String[] allWordsArray = everyWrittenWord.split("\\s+");
+
+        return Arrays.asList(allWordsArray);
+    }
+
+    public Set<String> getAllUniqueWords(List<JiraIssue> issues) {
+        // Get every word the user has ever written
+        String everyWrittenWord = getAllWords(issues);
+
+        // Remove all the whitespace and punctuation
+        everyWrittenWord = everyWrittenWord.replace(',', ' ').replace('.', ' ').replace('(', ' ').replace(')', ' ');
+        everyWrittenWord = everyWrittenWord.replace('"', ' ').replace('>', ' ');
+
+        // Get every unique word the user has ever said
+        String[] allWordsArray = everyWrittenWord.split("\\s+");
+        List<String> allWords = Arrays.asList(allWordsArray);
+
+        return new HashSet<>(allWords);
+    }
+
+    public FrequencyTable getFrequencyTableFromUniqueWords(Set<String> uniqueWords, List<String> allWords) {
+
+        FrequencyTable table = new FrequencyTable();
+
+        for (String uniqueWord : uniqueWords) {
+            int numOccurrences = 0;
+            for (String word : allWords) {
+                if (word.equals(uniqueWord)) {
+                    numOccurrences++;
+                }
+            }
+
+            FrequencyTableEntry entry = new FrequencyTableEntry(uniqueWord, numOccurrences);
+
+            table.getEntries().add(entry);
+        }
+        return table;
     }
 }
