@@ -58,4 +58,18 @@ public class FrequencyTableTest {
 
         assertTrue(similarity12 > similarity13);
     }
+
+    @Test
+    public void testGetTotalWords() {
+        FrequencyTableEntry cats = new FrequencyTableEntry("Cats", 7);
+        FrequencyTableEntry dogs = new FrequencyTableEntry("Dogs", 6);
+
+        FrequencyTable ft = new FrequencyTable();
+        ft.addEntry(cats);
+        ft.addEntry(dogs);
+
+        int totalWords = ft.getTotalWords();
+
+        assertEquals(13, totalWords);
+    }
 }
