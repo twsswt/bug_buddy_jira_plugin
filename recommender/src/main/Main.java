@@ -11,31 +11,39 @@ import java.util.*;
 public class Main {
 
     public static void main(String[] args) {
+        int successfulMatches = 0;
+
         // Get all issues from a jira instance
         Puller p = new Puller("localhost", "2990");
         ArrayList<JiraIssue> jiraIssues = p.getAllIssues();
 
-        // Build all frequency tables
-        List<User> allUsers = identifyAllUsers(jiraIssues);
-        buildAllFrequencyTables(allUsers, jiraIssues);
+        for (int i = 0; i < jiraIssues.size(); i++) {
+            JiraIssue issueBeingRecommended = jiraIssues.get(i);
+            List<JiraIssue> otherIssues = new ArrayList<>(jiraIssues);
+            otherIssues.remove(issueBeingRecommended);
 
-        // Input a test issue, to be automatically assigned to a user
-        System.out.print("Enter an issue: ");
-        StringBuilder issueText = new StringBuilder();
-        Scanner reader = new Scanner(System.in);
-        while (reader.hasNextLine()) {
-            issueText.append(reader.nextLine());
+
+            // Build all frequency tables for the test set
+            List<User> allUsers = identifyAllUsers(otherIssues);
+            buildAllFrequencyTables(allUsers, otherIssues);
+
+            // Build frequency table for test issue
+            JiraIssue testIssue = new JiraIssue();
+            testIssue.setText(issueBeingRecommended.getText());
+            testIssue.setAssignee("newissue@newissue.com");
+            testIssue.setReporter(issueBeingRecommended.getReporter());
+
+            // Find the closest match between our new frequency table and all other frequency tables...
+            String email = findClosestMatch(testIssue, allUsers);
+            if (email.equals(issueBeingRecommended.getAssignee())) {
+                successfulMatches++;
+
+            }
+
         }
-        reader.close();
 
-        // Build frequency table for test issue
-        JiraIssue newIssue = new JiraIssue();
-        newIssue.setText(issueText.toString());
-        newIssue.setAssignee("newissue@newissue.com");
-
-        // Find the closest match between our new frequency table and all other frequency tables...
-        findClosestMatch(newIssue, allUsers);
-
+        System.out.println("");
+        System.out.println("Matched " + successfulMatches + "/" + jiraIssues.size());
     }
 
     /**
@@ -43,7 +51,7 @@ public class Main {
      *
      * @return A list of users involved in the issue collection
      */
-    private static List<User> identifyAllUsers(ArrayList<JiraIssue> issues) {
+    private static List<User> identifyAllUsers(List<JiraIssue> issues) {
         // Find all Unique Emails
         Set<String> allUniqueEmails = new HashSet<>();
         for (JiraIssue issue : issues) {
@@ -79,9 +87,11 @@ public class Main {
 
     /**
      * Finds the closest match between an issue and a list of users, by
-     * making use of their frequency tables
+     * making use of their frequency tables.
+     *
+     * Returns the email of the closest match
      */
-    private static void findClosestMatch(JiraIssue issue, List<User> users) {
+    private static String findClosestMatch(JiraIssue issue, List<User> users) {
 
         // Build an issue list and a user for the issue
         // This is to deal with the coupling between users and frequency tables
@@ -113,6 +123,8 @@ public class Main {
         System.out.println("Max index: " + maxIndex);
         System.out.println("We Recommend you assign this issue to");
         System.out.println(users.get(maxIndex).getEmail());
+
+        return users.get(maxIndex).getEmail();
 
     }
 }
