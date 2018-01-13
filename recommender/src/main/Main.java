@@ -5,7 +5,10 @@ import classifier.User;
 import puller.JiraIssue;
 import puller.Puller;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public class Main {
 
@@ -17,6 +20,7 @@ public class Main {
         ArrayList<JiraIssue> jiraIssues = p.getAllIssues();
 
         for (int i = 0; i < jiraIssues.size(); i++) {
+
             JiraIssue issueBeingRecommended = jiraIssues.get(i);
             List<JiraIssue> otherIssues = new ArrayList<>(jiraIssues);
             otherIssues.remove(issueBeingRecommended);
@@ -28,7 +32,7 @@ public class Main {
 
             // Build frequency table for test issue
             JiraIssue testIssue = new JiraIssue();
-            testIssue.setText(issueBeingRecommended.getText());
+            testIssue.setText(issueBeingRecommended.getComments().get(0).getBody());
             testIssue.setAssignee("newissue@newissue.com");
             testIssue.setReporter(issueBeingRecommended.getReporter());
 
@@ -81,7 +85,7 @@ public class Main {
     /**
      * Finds the closest match between an issue and a list of users, by
      * making use of their frequency tables.
-     *
+     * <p>
      * Returns the email of the closest match
      */
     private static String findClosestMatch(JiraIssue issue, List<User> users) {
@@ -96,14 +100,13 @@ public class Main {
 
         FrequencyTable issueTable = issueUser.getWordTable();
 
-
         // Identify the best match between the issues frequency table and all other frequency tables
         double maxMatch = 0;
         int maxIndex = 0;
 
         for (int i = 0; i < users.size(); i++) {
             double similarity = issueTable.compareSimilarity(users.get(i).getWordTable());
-
+            
             if (similarity > maxMatch) {
                 maxMatch = similarity;
                 maxIndex = i;
