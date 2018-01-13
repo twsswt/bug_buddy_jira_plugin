@@ -2,7 +2,6 @@ package main;
 
 import classifier.FrequencyTable;
 import classifier.User;
-import puller.JiraComment;
 import puller.JiraIssue;
 import puller.Puller;
 
@@ -24,7 +23,7 @@ public class Main {
 
 
             // Build all frequency tables for the test set
-            List<User> allUsers = identifyAllUsers(otherIssues);
+            List<User> allUsers = identifyAllAssignableUsers(otherIssues);
             buildAllFrequencyTables(allUsers, otherIssues);
 
             // Build frequency table for test issue
@@ -51,16 +50,11 @@ public class Main {
      *
      * @return A list of users involved in the issue collection
      */
-    private static List<User> identifyAllUsers(List<JiraIssue> issues) {
-        // Find all Unique Emails
+    private static List<User> identifyAllAssignableUsers(List<JiraIssue> issues) {
+        // Find all Unique Emails that have previously had an issue assigned to them
         Set<String> allUniqueEmails = new HashSet<>();
         for (JiraIssue issue : issues) {
-            allUniqueEmails.add(issue.getReporter());
             allUniqueEmails.add(issue.getAssignee());
-
-            for (JiraComment comment : issue.getComments()) {
-                allUniqueEmails.add(comment.getAuthor());
-            }
         }
 
         // Create a list of user objects using all unique emails
@@ -81,7 +75,6 @@ public class Main {
     private static void buildAllFrequencyTables(List<User> users, List<JiraIssue> issues) {
         for (int i = 0; i < users.size(); i++) {
             users.get(i).buildFrequencyTable(issues);
-            System.out.println("Built Frequency Table for user " + i);
         }
     }
 
@@ -110,7 +103,6 @@ public class Main {
 
         for (int i = 0; i < users.size(); i++) {
             double similarity = issueTable.compareSimilarity(users.get(i).getWordTable());
-            System.out.println("i: " + i + " sim " + similarity);
 
             if (similarity > maxMatch) {
                 maxMatch = similarity;
@@ -119,10 +111,7 @@ public class Main {
         }
 
         // Output the results
-        System.out.println("Max match: " + maxMatch);
-        System.out.println("Max index: " + maxIndex);
-        System.out.println("We Recommend you assign this issue to");
-        System.out.println(users.get(maxIndex).getEmail());
+        System.out.println("We Recommend you assign this issue to: " + users.get(maxIndex).getEmail());
 
         return users.get(maxIndex).getEmail();
 
