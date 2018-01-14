@@ -1,6 +1,6 @@
 package classifier;
 
-class FrequencyTableEntry {
+public class FrequencyTableEntry {
     private String word;
     private int frequency;
 

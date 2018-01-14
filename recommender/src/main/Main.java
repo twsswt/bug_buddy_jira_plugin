@@ -1,6 +1,8 @@
 package main;
 
 import classifier.FrequencyTable;
+import classifier.FrequencyTableEntry;
+import classifier.Skill;
 import classifier.User;
 import puller.JiraIssue;
 import puller.Puller;
@@ -12,7 +14,52 @@ import java.util.Set;
 
 public class Main {
 
+    private enum MatchingAlgorithm {
+        WORD_BASED, SKILLS_BASED
+    }
+
+    private static MatchingAlgorithm matchingAlgorithm;
+    private static List<Skill> skills;
+
+    private static void parseCommandLineArguments(String args[]){
+        if (args.length == 0) {
+            matchingAlgorithm = MatchingAlgorithm.WORD_BASED;
+        }
+        if (args[0].equals("skills")) {
+            matchingAlgorithm = MatchingAlgorithm.SKILLS_BASED;
+        } else {
+            matchingAlgorithm = MatchingAlgorithm.WORD_BASED;
+        }
+    }
+
+    private static void initialiseSkills() {
+        skills = new ArrayList<>();
+
+        Skill networking = new Skill("networking");
+        networking.addKeyword("TCP");
+        networking.addKeyword("UDP");
+        networking.addKeyword("IP");
+        networking.addKeyword("connection");
+        skills.add(networking);
+
+        Skill frontend = new Skill("frontend");
+        frontend.addKeyword("GUI");
+        frontend.addKeyword("color");
+        frontend.addKeyword("colour");
+        skills.add(frontend);
+
+        Skill programmer = new Skill("programmer");
+        programmer.addKeyword("method");
+        programmer.addKeyword("exception");
+        programmer.addKeyword("solution");
+        skills.add(programmer);
+
+    }
     public static void main(String[] args) {
+
+        parseCommandLineArguments(args);
+        initialiseSkills();
+
         int successfulMatches = 0;
 
         // Get all issues from a jira instance
@@ -20,33 +67,71 @@ public class Main {
         ArrayList<JiraIssue> jiraIssues = p.getAllIssues();
 
         for (int i = 0; i < jiraIssues.size(); i++) {
-
+            
             JiraIssue issueBeingRecommended = jiraIssues.get(i);
             List<JiraIssue> otherIssues = new ArrayList<>(jiraIssues);
             otherIssues.remove(issueBeingRecommended);
 
-
-            // Build all frequency tables for the test set
-            List<User> allUsers = identifyAllAssignableUsers(otherIssues);
-            buildAllFrequencyTables(allUsers, otherIssues);
-
-            // Build frequency table for test issue
+            // Build data for test issue
             JiraIssue testIssue = new JiraIssue();
             testIssue.setText(issueBeingRecommended.getComments().get(0).getBody());
             testIssue.setAssignee("newissue@newissue.com");
             testIssue.setReporter(issueBeingRecommended.getReporter());
 
-            // Find the closest match between our new frequency table and all other frequency tables...
-            String email = findClosestMatch(testIssue, allUsers);
-            if (email.equals(issueBeingRecommended.getAssignee())) {
-                successfulMatches++;
+            List<User> allUsers = identifyAllAssignableUsers(otherIssues);
 
+            if (matchingAlgorithm == MatchingAlgorithm.WORD_BASED) {
+                // Build all frequency tables for the test set
+                buildAllFrequencyTables(allUsers, otherIssues);
+
+                // Find the closest match between our new frequency table and all other frequency tables...
+                String email = findClosestMatchWordBased(testIssue, allUsers);
+                if (email.equals(issueBeingRecommended.getAssignee())) {
+                    successfulMatches++;
+                }
+            } else {
+                buildAllFrequencyTables(allUsers, otherIssues);
+
+                for (User user : allUsers) {
+                    identifySkillsFromFrequencyTable(user, skills);
+                }
+
+                String email = findClosestMatchSkillBased(testIssue, allUsers);
+                if (email.equals(issueBeingRecommended.getAssignee())) {
+                    successfulMatches++;
+                }
             }
 
         }
 
         System.out.println("");
         System.out.println("Matched " + successfulMatches + "/" + jiraIssues.size());
+    }
+
+    private static void identifySkillsFromFrequencyTable(User user, List<Skill> globalSkills) {
+        FrequencyTable ft = user.getWordTable();
+
+        for (Skill skill : globalSkills) {
+            int keywordHits = 0;
+
+            for (String keyword: skill.getKeywords()) {
+                FrequencyTableEntry entry = ft.getEntryWithWord(keyword);
+                if (entry != null) {
+                    keywordHits += entry.getFrequency();
+                }
+            }
+
+            // If the number of occurrences of a skills keyword is higher than a threshold, then the user
+            // is considered to have that skill
+            double threshold = 0.001;
+            double skillPercentage = keywordHits / (double) ft.getTotalWords();
+
+            if (skillPercentage > threshold) {
+                List<Skill> updatedSkillsList = user.getSkills();
+                updatedSkillsList.add(skill);
+                user.setSkills(updatedSkillsList);
+            }
+        }
     }
 
     /**
@@ -90,6 +175,59 @@ public class Main {
      */
     private static String findClosestMatch(JiraIssue issue, List<User> users) {
 
+        if (matchingAlgorithm == MatchingAlgorithm.WORD_BASED) {
+            return findClosestMatchWordBased(issue, users);
+        } else {
+            return findClosestMatchSkillBased(issue, users);
+        }
+
+    }
+
+    private static String findClosestMatchSkillBased(JiraIssue issue, List<User> users) {
+        // Build an issue list and a user for the issue
+        // This is to deal with the coupling between users and frequency tables
+        ArrayList<JiraIssue> issueList = new ArrayList<>();
+        issueList.add(issue);
+        User issueUser = new User();
+        issueUser.setEmail("newissue@newissue.com");
+        issueUser.buildFrequencyTable(issueList);
+
+        identifySkillsFromFrequencyTable(issueUser, skills);
+
+        List<Skill> skillsRequired = issueUser.getSkills();
+        System.out.println("Skills required: " + skillsRequired);
+
+        User bestUser = null;
+        int skillsMatched = 0;
+
+        for (int i = 0; i < users.size(); i++) {
+            int thisSkillsMatched = 0;
+            List<Skill> userSkills = users.get(i).getSkills();
+
+            for (Skill requiredSkill : skillsRequired) {
+                if (userSkills.contains(requiredSkill)) {
+                    thisSkillsMatched++;
+                }
+            }
+
+            if (thisSkillsMatched > skillsMatched) {
+                bestUser = users.get(i);
+                skillsMatched = thisSkillsMatched;
+            }
+        }
+
+        if (bestUser == null) {
+            System.out.println("Couldn't find any match! :(");
+            return "";
+        } else {
+
+            System.out.println("We recommend you assign this issue to: " + bestUser.getEmail());
+            return bestUser.getEmail();
+        }
+    }
+
+    private static String findClosestMatchWordBased(JiraIssue issue, List<User> users) {
+
         // Build an issue list and a user for the issue
         // This is to deal with the coupling between users and frequency tables
         ArrayList<JiraIssue> issueList = new ArrayList<>();
@@ -106,7 +244,7 @@ public class Main {
 
         for (int i = 0; i < users.size(); i++) {
             double similarity = issueTable.compareSimilarity(users.get(i).getWordTable());
-            
+
             if (similarity > maxMatch) {
                 maxMatch = similarity;
                 maxIndex = i;
@@ -119,4 +257,5 @@ public class Main {
         return users.get(maxIndex).getEmail();
 
     }
+
 }

@@ -3,14 +3,23 @@ package classifier;
 import puller.JiraComment;
 import puller.JiraIssue;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class User {
     private String email;
     private FrequencyTable wordTable;
+    private List<Skill> skills;
+
+    public User() {
+        skills = new ArrayList<>();
+    }
+    public List<Skill> getSkills() {
+        return skills;
+    }
+
+    public void setSkills(List<Skill> skills) {
+        this.skills = skills;
+    }
 
     public String getEmail() {
         return email;
