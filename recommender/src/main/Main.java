@@ -14,14 +14,6 @@ import java.util.Set;
 
 public class Main {
 
-    /**
-     * This stores the class of matching algorithm to be used
-     * when assigning users to issues
-     */
-    private enum MatchingAlgorithm {
-        WORD_BASED, SKILLS_BASED
-    }
-
     private static MatchingAlgorithm matchingAlgorithm;
     private static List<Skill> globalSkills;
 
@@ -29,7 +21,7 @@ public class Main {
      * Identifies which matching algorithm to use based
      * on the command line arguments passed
      */
-    private static void parseCommandLineArguments(String args[]){
+    private static void parseCommandLineArguments(String args[]) {
         if (args.length == 0) {
             matchingAlgorithm = MatchingAlgorithm.WORD_BASED;
         }
@@ -75,7 +67,10 @@ public class Main {
     public static void main(String[] args) {
 
         parseCommandLineArguments(args);
-        initialiseGlobalSkills();
+
+        if (matchingAlgorithm == MatchingAlgorithm.SKILLS_BASED) {
+            initialiseGlobalSkills();
+        }
 
         int successfulMatches = 0;
 
@@ -83,52 +78,68 @@ public class Main {
         Puller p = new Puller("localhost", "2990");
         ArrayList<JiraIssue> jiraIssues = p.getAllIssues();
 
+        // Assign every issue to a user, and determine if our assignment was the same
+        // as the actual assignment
         for (int i = 0; i < jiraIssues.size(); i++) {
-            
-            JiraIssue issueBeingRecommended = jiraIssues.get(i);
-            List<JiraIssue> otherIssues = new ArrayList<>(jiraIssues);
-            otherIssues.remove(issueBeingRecommended);
-
-            // Build data for test issue
-            JiraIssue testIssue = new JiraIssue();
-            testIssue.setText(issueBeingRecommended.getComments().get(0).getBody());
-            testIssue.setAssignee("newissue@newissue.com");
-            testIssue.setReporter(issueBeingRecommended.getReporter());
-
-            List<User> allUsers = identifyAllAssignableUsers(otherIssues);
-
-            if (matchingAlgorithm == MatchingAlgorithm.WORD_BASED) {
-                // Build all frequency tables for the test set
-                buildAllFrequencyTables(allUsers, otherIssues);
-
-                // Find the closest match between our new frequency table and all other frequency tables...
-                String email = findClosestMatchWordBased(testIssue, allUsers);
-                if (email.equals(issueBeingRecommended.getAssignee())) {
-                    successfulMatches++;
-                }
-            } else {
-                buildAllFrequencyTables(allUsers, otherIssues);
-
-                for (User user : allUsers) {
-                    identifySkillsFromFrequencyTable(user, globalSkills);
-                }
-
-                String email = findClosestMatchSkillBased(testIssue, allUsers);
-                if (email.equals(issueBeingRecommended.getAssignee())) {
-                    successfulMatches++;
-                }
+            if (recommendUserAndValidate(jiraIssues, jiraIssues.get(i))) {
+                successfulMatches++;
             }
-
         }
 
         System.out.println("");
         System.out.println("Matched " + successfulMatches + "/" + jiraIssues.size());
     }
 
+    private static boolean recommendUserAndValidate(List<JiraIssue> jiraIssues, JiraIssue issueBeingRecommended) {
+        // Separate the entire set of issues into two sets
+        // One set containing only the issue we wish to test recommendations on
+        // One set containing all other issues in the data set
+        List<JiraIssue> otherIssues = new ArrayList<>(jiraIssues);
+        otherIssues.remove(issueBeingRecommended);
+
+        JiraIssue testIssue = new JiraIssue();
+        testIssue.setText(issueBeingRecommended.getComments().get(0).getBody());
+        testIssue.setAssignee("newissue@newissue.com");
+        testIssue.setReporter(issueBeingRecommended.getReporter());
+
+        // Identify all users who are candidates for assignment
+        List<User> allUsers = identifyAllAssignableUsers(otherIssues);
+
+        buildAllFrequencyTables(allUsers, otherIssues);
+
+        String recommendedEmail = "";
+
+        switch (matchingAlgorithm) {
+            case WORD_BASED: {
+                recommendedEmail = findClosestMatchWordBased(testIssue, allUsers);
+                break;
+            }
+            case SKILLS_BASED: {
+
+                for (User user : allUsers) {
+                    identifySkillsFromFrequencyTable(user, globalSkills);
+                }
+
+                recommendedEmail = findClosestMatchSkillBased(testIssue, allUsers);
+                break;
+            }
+            default: {
+                System.out.println("Please choose a recommendation method");
+                break;
+            }
+        }
+
+
+        System.out.println("We recommend you assign this issue to " + recommendedEmail);
+
+        return recommendedEmail.equals(issueBeingRecommended.getAssignee());
+    }
+
     /**
      * Identifies the skills a user has, from the global set we wish to match on, based
      * on the users frequency of words
-     * @param user the user who's skills we wish to identify
+     *
+     * @param user         the user who's skills we wish to identify
      * @param globalSkills the skills we wish to match on
      */
     private static void identifySkillsFromFrequencyTable(User user, List<Skill> globalSkills) {
@@ -137,7 +148,7 @@ public class Main {
         for (Skill skill : globalSkills) {
             int keywordHits = 0;
 
-            for (String keyword: skill.getKeywords()) {
+            for (String keyword : skill.getKeywords()) {
                 FrequencyTableEntry entry = ft.getEntryWithWord(keyword);
                 if (entry != null) {
                     keywordHits += entry.getFrequency();
@@ -266,5 +277,13 @@ public class Main {
         }
 
         return users.get(maxIndex).getEmail();
+    }
+
+    /**
+     * This stores the class of matching algorithm to be used
+     * when assigning users to issues
+     */
+    private enum MatchingAlgorithm {
+        WORD_BASED, SKILLS_BASED
     }
 }
