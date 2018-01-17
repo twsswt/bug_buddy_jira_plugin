@@ -14,13 +14,21 @@ import java.util.Set;
 
 public class Main {
 
+    /**
+     * This stores the class of matching algorithm to be used
+     * when assigning users to issues
+     */
     private enum MatchingAlgorithm {
         WORD_BASED, SKILLS_BASED
     }
 
     private static MatchingAlgorithm matchingAlgorithm;
-    private static List<Skill> skills;
+    private static List<Skill> globalSkills;
 
+    /**
+     * Identifies which matching algorithm to use based
+     * on the command line arguments passed
+     */
     private static void parseCommandLineArguments(String args[]){
         if (args.length == 0) {
             matchingAlgorithm = MatchingAlgorithm.WORD_BASED;
@@ -32,33 +40,42 @@ public class Main {
         }
     }
 
-    private static void initialiseSkills() {
-        skills = new ArrayList<>();
+    /**
+     * Initialises the global skills list with all skills
+     * we are searching for
+     */
+    private static void initialiseGlobalSkills() {
+        globalSkills = new ArrayList<>();
 
         Skill networking = new Skill("networking");
         networking.addKeyword("TCP");
         networking.addKeyword("UDP");
         networking.addKeyword("IP");
         networking.addKeyword("connection");
-        skills.add(networking);
+        globalSkills.add(networking);
 
         Skill frontend = new Skill("frontend");
         frontend.addKeyword("GUI");
         frontend.addKeyword("color");
         frontend.addKeyword("colour");
-        skills.add(frontend);
+        globalSkills.add(frontend);
 
         Skill programmer = new Skill("programmer");
         programmer.addKeyword("method");
         programmer.addKeyword("exception");
         programmer.addKeyword("solution");
-        skills.add(programmer);
+        globalSkills.add(programmer);
 
     }
+
+    /**
+     * runs the given matching algorithm over the entire data set, and determines
+     * how successful it was at matching the data
+     */
     public static void main(String[] args) {
 
         parseCommandLineArguments(args);
-        initialiseSkills();
+        initialiseGlobalSkills();
 
         int successfulMatches = 0;
 
@@ -93,7 +110,7 @@ public class Main {
                 buildAllFrequencyTables(allUsers, otherIssues);
 
                 for (User user : allUsers) {
-                    identifySkillsFromFrequencyTable(user, skills);
+                    identifySkillsFromFrequencyTable(user, globalSkills);
                 }
 
                 String email = findClosestMatchSkillBased(testIssue, allUsers);
@@ -169,20 +186,10 @@ public class Main {
 
     /**
      * Finds the closest match between an issue and a list of users, by
-     * making use of their frequency tables.
+     * making use of their skills
      * <p>
      * Returns the email of the closest match
      */
-    private static String findClosestMatch(JiraIssue issue, List<User> users) {
-
-        if (matchingAlgorithm == MatchingAlgorithm.WORD_BASED) {
-            return findClosestMatchWordBased(issue, users);
-        } else {
-            return findClosestMatchSkillBased(issue, users);
-        }
-
-    }
-
     private static String findClosestMatchSkillBased(JiraIssue issue, List<User> users) {
         // Build an issue list and a user for the issue
         // This is to deal with the coupling between users and frequency tables
@@ -192,7 +199,7 @@ public class Main {
         issueUser.setEmail("newissue@newissue.com");
         issueUser.buildFrequencyTable(issueList);
 
-        identifySkillsFromFrequencyTable(issueUser, skills);
+        identifySkillsFromFrequencyTable(issueUser, globalSkills);
 
         List<Skill> skillsRequired = issueUser.getSkills();
         System.out.println("Skills required: " + skillsRequired);
@@ -226,6 +233,12 @@ public class Main {
         }
     }
 
+    /**
+     * Finds the closest match between an issue and a list of users, by
+     * making use of their frequency tables.
+     * <p>
+     * Returns the email of the closest match
+     */
     private static String findClosestMatchWordBased(JiraIssue issue, List<User> users) {
 
         // Build an issue list and a user for the issue
