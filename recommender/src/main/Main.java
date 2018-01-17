@@ -125,6 +125,12 @@ public class Main {
         System.out.println("Matched " + successfulMatches + "/" + jiraIssues.size());
     }
 
+    /**
+     * Identifies the skills a user has, from the global set we wish to match on, based
+     * on the users frequency of words
+     * @param user the user who's skills we wish to identify
+     * @param globalSkills the skills we wish to match on
+     */
     private static void identifySkillsFromFrequencyTable(User user, List<Skill> globalSkills) {
         FrequencyTable ft = user.getWordTable();
 
@@ -179,9 +185,23 @@ public class Main {
      * Builds a frequency table for all users
      */
     private static void buildAllFrequencyTables(List<User> users, List<JiraIssue> issues) {
-        for (int i = 0; i < users.size(); i++) {
-            users.get(i).buildFrequencyTable(issues);
+        for (User user : users) {
+            user.buildFrequencyTable(issues);
         }
+    }
+
+    /**
+     * Creates a dummy user with a frequency table for the issue being assigned a
+     * recommendee
+     */
+    private static User createDummyUserForIssueBeingAssigned(JiraIssue issue) {
+        ArrayList<JiraIssue> issueList = new ArrayList<>();
+        issueList.add(issue);
+        User issueUser = new User();
+        issueUser.setEmail("newissue@newissue.com");
+        issueUser.buildFrequencyTable(issueList);
+
+        return issueUser;
     }
 
     /**
@@ -191,46 +211,34 @@ public class Main {
      * Returns the email of the closest match
      */
     private static String findClosestMatchSkillBased(JiraIssue issue, List<User> users) {
-        // Build an issue list and a user for the issue
-        // This is to deal with the coupling between users and frequency tables
-        ArrayList<JiraIssue> issueList = new ArrayList<>();
-        issueList.add(issue);
-        User issueUser = new User();
-        issueUser.setEmail("newissue@newissue.com");
-        issueUser.buildFrequencyTable(issueList);
+        User issueUser = createDummyUserForIssueBeingAssigned(issue);
 
         identifySkillsFromFrequencyTable(issueUser, globalSkills);
 
         List<Skill> skillsRequired = issueUser.getSkills();
-        System.out.println("Skills required: " + skillsRequired);
 
         User bestUser = null;
         int skillsMatched = 0;
 
-        for (int i = 0; i < users.size(); i++) {
+        for (User user : users) {
             int thisSkillsMatched = 0;
-            List<Skill> userSkills = users.get(i).getSkills();
+            List<Skill> userSkills = user.getSkills();
 
+            // Find how many matching skills this user has
             for (Skill requiredSkill : skillsRequired) {
                 if (userSkills.contains(requiredSkill)) {
                     thisSkillsMatched++;
                 }
             }
 
+            // Record this user, if their skills are a better match
             if (thisSkillsMatched > skillsMatched) {
-                bestUser = users.get(i);
+                bestUser = user;
                 skillsMatched = thisSkillsMatched;
             }
         }
 
-        if (bestUser == null) {
-            System.out.println("Couldn't find any match! :(");
-            return "";
-        } else {
-
-            System.out.println("We recommend you assign this issue to: " + bestUser.getEmail());
-            return bestUser.getEmail();
-        }
+        return bestUser == null ? "" : bestUser.getEmail();
     }
 
     /**
@@ -241,17 +249,10 @@ public class Main {
      */
     private static String findClosestMatchWordBased(JiraIssue issue, List<User> users) {
 
-        // Build an issue list and a user for the issue
-        // This is to deal with the coupling between users and frequency tables
-        ArrayList<JiraIssue> issueList = new ArrayList<>();
-        issueList.add(issue);
-        User issueUser = new User();
-        issueUser.setEmail("newissue@newissue.com");
-        issueUser.buildFrequencyTable(issueList);
-
+        User issueUser = createDummyUserForIssueBeingAssigned(issue);
         FrequencyTable issueTable = issueUser.getWordTable();
 
-        // Identify the best match between the issues frequency table and all other frequency tables
+        // Identify the best match between this issues frequency table and all other frequency tables
         double maxMatch = 0;
         int maxIndex = 0;
 
@@ -264,11 +265,6 @@ public class Main {
             }
         }
 
-        // Output the results
-        System.out.println("We Recommend you assign this issue to: " + users.get(maxIndex).getEmail());
-
         return users.get(maxIndex).getEmail();
-
     }
-
 }
