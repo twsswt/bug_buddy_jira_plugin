@@ -1,0 +1,4 @@
+<div class="mod-header">
+    <h1>Bug Buddy Issue Auto-Assigner</h1>
+    <h3>$i18n.getText('bug-buddy-issue-tab-panel.label')</h3>
+</div>
