@@ -1,6 +1,6 @@
 # Complition results
 bug_buddy/target
-evaluation-harness/out
+data-gatherer/out
 recommender/out
 
 # IDE stuff
@@ -8,7 +8,7 @@ recommender/out
 *.iml
 
 # Libraries
-evaluation-harness/lib
+data-gatherer/lib
 
 # Data
 project-issue-data/*
