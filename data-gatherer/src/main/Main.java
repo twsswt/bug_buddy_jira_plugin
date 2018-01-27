@@ -8,7 +8,7 @@ import evaluationStructures.JiraProject;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import scraper.CSVIssueReader;
-import scraper.Scraper;
+import scraper.FirefoxScraper;
 import sender.Sender;
 
 import java.io.File;
@@ -131,13 +131,13 @@ class Main {
 
         // Get the comments for each issue, since they
         // aren't provided in the issue data CSV
-        Scraper s = new Scraper();
+        FirefoxScraper scraper = new FirefoxScraper();
 
         for (int i = 0; i < maxIssuesToProcess; i++) {
             logger.info("Processing issue " + (i + 1) + "/" + maxIssuesToProcess);
-            s.getIssueJSON(issues.get(i), ("../project-issue-data/bugreport.mozilla.firefox/FirefoxIssueJSON/"));
+            scraper.getIssueJSON(issues.get(i), ("../project-issue-data/bugreport.mozilla.firefox/FirefoxIssueJSON/"));
 
-            ArrayList<FirefoxComment> comments = s.extractIssueCommentsFromJSON(issues.get(i));
+            ArrayList<FirefoxComment> comments = scraper.extractIssueCommentsFromJSON(issues.get(i));
             issues.get(i).setComments(comments);
         }
 
@@ -145,8 +145,8 @@ class Main {
     }
 
     private static void writeJSONToFile(String JSON, String filename) {
-        Scraper s = new Scraper();
-        s.saveDataToFile(JSON, new File(filename));
+        FirefoxScraper scraper = new FirefoxScraper();
+        scraper.saveDataToFile(JSON, new File(filename));
     }
 }
 
