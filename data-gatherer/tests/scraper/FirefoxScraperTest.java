@@ -11,12 +11,12 @@ import java.util.ArrayList;
 
 import static org.junit.Assert.*;
 
-public class ScraperTest {
+public class FirefoxScraperTest {
 
     // We want this function to run very quickly if we don't have to redownload the xml file
     @Test(timeout = 100)
     public void ensureGetIssueXMLSkipsAlreadyExistingXML() throws Exception {
-        Scraper s = new Scraper();
+        FirefoxScraper s = new FirefoxScraper();
         FirefoxIssue testIssue = new FirefoxIssue();
         testIssue.setBugID(212779);
 
@@ -26,7 +26,7 @@ public class ScraperTest {
 
     @Test
     public void ensureGetIssueXMLDownloadsNotExistingXML() throws Exception {
-        Scraper s = new Scraper();
+        FirefoxScraper s = new FirefoxScraper();
         FirefoxIssue testIssue = new FirefoxIssue();
         testIssue.setBugID(212778);
 
@@ -41,13 +41,13 @@ public class ScraperTest {
 
     @Test
     public void ensureSaveXMLToFileDoesntThrowException() throws Exception {
-        Scraper s = new Scraper();
+        FirefoxScraper s = new FirefoxScraper();
         s.saveDataToFile("<head></head>", new File("tests/test-xml-files/212778.xml"));
     }
 
     @Test
     public void ensureExtractIssueCommentsFromXMLExtractsAllComments() throws Exception {
-        Scraper s = new Scraper();
+        FirefoxScraper s = new FirefoxScraper();
         s.setIssueXMLDataLocation("tests/test-xml-files/");
 
         FirefoxIssue testIssue = new FirefoxIssue();
@@ -60,7 +60,7 @@ public class ScraperTest {
 
     @Test
     public void ensureExtractIssueCommentsFromJsonExtractsAllComments() throws Exception {
-        Scraper s = new Scraper();
+        FirefoxScraper s = new FirefoxScraper();
         s.setIssueJSONDataLocation("tests/test-xml-files/");
 
         FirefoxIssue testIssue = new FirefoxIssue();
