@@ -23,17 +23,17 @@ import java.util.ArrayList;
  * This class is responsible for downloading data from a specified URL, and feeding it
  * into an appropriate data structure (see package evaluationStructures)
  */
-public class Scraper {
+public class FirefoxScraper {
     private static final String DEFAULT_FIREFOX_ISSUE_XML_LOCATION = "../project-issue-data/bugreport.mozilla.firefox/FirefoxIssueXML/";
     private static final String DEFAULT_FIREFOX_ISSUE_JSON_LOCATION = "../project-issue-data/bugreport.mozilla.firefox/FirefoxIssueJSON/";
-    private static final Logger logger = LogManager.getLogger(Scraper.class);
+    private static final Logger logger = LogManager.getLogger(FirefoxScraper.class);
     private String issueXMLDataLocation;
     private String issueJSONDataLocation;
 
     /**
      * Creates a scraper using default locations for the issue XML and JSON locations
      */
-    public Scraper() {
+    public FirefoxScraper() {
         issueXMLDataLocation = DEFAULT_FIREFOX_ISSUE_XML_LOCATION;
         issueJSONDataLocation = DEFAULT_FIREFOX_ISSUE_JSON_LOCATION;
     }
