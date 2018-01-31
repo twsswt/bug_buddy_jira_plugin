@@ -32,33 +32,74 @@ public class Sender {
         updateJiraAPILocation();
     }
 
-    private static String extractIssueIDFromSuccessJSON(String successJSON) {
-        String[] JSONComponents = successJSON.split(",");
-        String[] idComponents = JSONComponents[0].split(":");
-        String id = idComponents[1];
-        id = id.replace("\"", "");
-
-        return id;
-    }
-
-    private void updateJiraAPILocation() {
-        this.jiraAPILocation = "http://" + this.jiraIP + ":" + jiraPort + "/jira/rest/api/2/";
+    public String getIssueJSONLocation() {
+        return issueJSONLocation;
     }
 
     public void setIssueJSONLocation(String issueJSONLocation) {
         this.issueJSONLocation = issueJSONLocation;
     }
 
+    public String extractIssueIDFromSuccessJSON(String successJSON) {
+        String[] JSONComponents = successJSON.split(",");
+        String[] idComponents = JSONComponents[0].split(":");
+        String id = idComponents[1];
+        id = id.replace("\"", "");
+        return id;
+    }
+
+    public void updateJiraAPILocation() {
+        this.jiraAPILocation = "http://" + this.jiraIP + ":" + jiraPort + "/jira/rest/api/2/";
+    }
+
+    public String getJiraAPILocation() {
+        return jiraAPILocation;
+    }
+
     /**
      * sendPostCommand will send a POST command containing the specified json document, to the specified API section
-     * @param filename the JSON document we wish to POST
+     *
+     * @param filename   the JSON document we wish to POST
      * @param apiSection The API section we wish to POST to
      */
     public void sendPostCommand(String filename, String apiSection) {
-        String returnedJSON = "";
-        try {
-            String curlCommand = CURL_POST_PREFIX + issueJSONLocation + filename + CURL_POST_MIDFIX + this.jiraAPILocation + apiSection;
 
+        String curlCommand = CURL_POST_PREFIX + issueJSONLocation + filename + CURL_POST_MIDFIX + this.jiraAPILocation + apiSection;
+        String returnedJSON = sendCurlCommand(curlCommand);
+
+        if (returnedJSON.charAt(2) == 'e') {
+            logger.warn("Issue posting " + filename);
+            logger.warn(returnedJSON);
+        }
+    }
+
+    /**
+     * This function works the same as sendPostCommand, but also returns the issue ID
+     * which is created by JIRA, when an issue is posted to it
+     * <p>
+     * The issue ID is required when POSTing comments
+     *
+     * @param filename   the JSON issue we wish to post
+     * @param apiSection the API section we wish to post to
+     * @return The newly created Issue ID
+     */
+    public String sendPostCommandExtractIssueID(String filename, String apiSection) {
+
+        String curlCommand = CURL_POST_PREFIX + issueJSONLocation + filename + CURL_POST_MIDFIX + this.jiraAPILocation + apiSection;
+        String successJSON = sendCurlCommand(curlCommand);
+
+        return extractIssueIDFromSuccessJSON(successJSON);
+    }
+
+    /**
+     * This function sends a curl command, and returns the JSON returned by curl
+     * @param curlCommand the command to send
+     * @return the json returned by curl
+     */
+    private String sendCurlCommand(String curlCommand) {
+        String returnedJSON = "";
+
+        try {
             logger.info("Sending: " + curlCommand);
             Process p = Runtime.getRuntime().exec(curlCommand);
             p.waitFor();
@@ -70,46 +111,10 @@ public class Sender {
                 returnedJSON = line;
                 logger.debug("Sending: " + line);
             }
-
-            if (returnedJSON.charAt(2) == 'e') {
-                logger.warn("Issue posting " + filename);
-                logger.warn(returnedJSON);
-            }
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
 
-    /**
-     * This function works the same as sendPostCommand, but also returns the issue ID
-     * which is created by JIRA, when an issue is posted to it
-     *
-     * The issue ID is required when POSTing comments
-     * @param filename the JSON issue we wish to post
-     * @param apiSection the API section we wish to post to
-     * @return The newly created Issue ID
-     */
-    public String sendPostCommandExtractIssueID(String filename, String apiSection) {
-        String successJSON = "";
-        try {
-            String curlCommand = CURL_POST_PREFIX + issueJSONLocation + filename + CURL_POST_MIDFIX + this.jiraAPILocation + apiSection;
-
-            logger.info("Sending: " + curlCommand);
-            Process p = Runtime.getRuntime().exec(curlCommand);
-            p.waitFor();
-
-            InputStream stdout = p.getInputStream();
-            BufferedReader reader = new BufferedReader(new InputStreamReader(stdout));
-            String line;
-            while ((line = reader.readLine()) != null) {
-                successJSON = line;
-                logger.debug(line);
-            }
-
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return extractIssueIDFromSuccessJSON(successJSON);
+        return returnedJSON;
     }
 }
