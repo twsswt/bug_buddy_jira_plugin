@@ -7,7 +7,7 @@ import static org.junit.Assert.*;
 public class JiraProjectTest {
 
     @Test
-    public void setKey() {
+    public void testSetKey() {
         JiraProject jiraProject = new JiraProject();
         String expectedKey = "FRFX2";
         jiraProject.setKey(expectedKey);
@@ -18,7 +18,7 @@ public class JiraProjectTest {
     }
 
     @Test
-    public void setName() {
+    public void testSetName() {
         JiraProject jiraProject = new JiraProject();
         String expectedName = "FirefoxQuantum";
         jiraProject.setName(expectedName);
@@ -29,7 +29,7 @@ public class JiraProjectTest {
     }
 
     @Test
-    public void setProjectTypeKey() {
+    public void testSetProjectTypeKey() {
         JiraProject jiraProject = new JiraProject();
         String expectedProjectTypeKey = "charity";
         jiraProject.setProjectTypeKey(expectedProjectTypeKey);
@@ -40,7 +40,7 @@ public class JiraProjectTest {
     }
 
     @Test
-    public void setProjectTemplateKey() {
+    public void testSetProjectTemplateKey() {
         JiraProject jiraProject = new JiraProject();
         String expectedProjectTemplateKey = "com.atlassian.jira-core-project-templates:jira-core-charity";
         jiraProject.setProjectTemplateKey(expectedProjectTemplateKey);
@@ -51,7 +51,7 @@ public class JiraProjectTest {
     }
 
     @Test
-    public void setDescription() {
+    public void testSetDescription() {
         JiraProject jiraProject = new JiraProject();
         String expectedDescription = "Super fast Firefox";
         jiraProject.setDescription(expectedDescription);
@@ -62,7 +62,7 @@ public class JiraProjectTest {
     }
 
     @Test
-    public void setLead() {
+    public void testSetLead() {
         JiraProject jiraProject = new JiraProject();
         String expectedLead = "StephenBrown";
         jiraProject.setLead(expectedLead);
@@ -73,7 +73,7 @@ public class JiraProjectTest {
     }
 
     @Test
-    public void setUrl() {
+    public void testSetUrl() {
         JiraProject jiraProject = new JiraProject();
         String expectedURL = "https://gitlab.com/u/sbrown1992";
         jiraProject.setUrl(expectedURL);
@@ -84,7 +84,7 @@ public class JiraProjectTest {
     }
 
     @Test
-    public void setAssigneeType() {
+    public void testSetAssigneeType() {
         JiraProject jiraProject = new JiraProject();
         String expectedAssigneeType = "PROJECT_LEADER";
         jiraProject.setAssigneeType(expectedAssigneeType);
@@ -95,7 +95,7 @@ public class JiraProjectTest {
     }
 
     @Test
-    public void setAvatarID() {
+    public void testSetAvatarID() {
         JiraProject jiraProject = new JiraProject();
         int expectedAvatarID = 666;
         jiraProject.setAvatarID(expectedAvatarID);
@@ -106,7 +106,7 @@ public class JiraProjectTest {
     }
 
     @Test
-    public void setPermissionScheme() {
+    public void testSetPermissionScheme() {
         JiraProject jiraProject = new JiraProject();
         int expectedPermissionScheme = 666;
         jiraProject.setPermissionScheme(expectedPermissionScheme);
@@ -117,7 +117,7 @@ public class JiraProjectTest {
     }
 
     @Test
-    public void setNotificationScheme() {
+    public void testSetNotificationScheme() {
         JiraProject jiraProject = new JiraProject();
         int expectedNotificationScheme = 666;
         jiraProject.setNotificationScheme(expectedNotificationScheme);
