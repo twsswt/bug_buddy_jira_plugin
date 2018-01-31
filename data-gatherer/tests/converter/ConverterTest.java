@@ -1,5 +1,6 @@
 package converter;
 
+import evaluationStructures.FirefoxComment;
 import evaluationStructures.FirefoxIssue;
 import evaluationStructures.JiraIssue;
 import evaluationStructures.JiraProject;
@@ -10,7 +11,7 @@ import static org.junit.Assert.assertEquals;
 public class ConverterTest {
 
     @Test
-    public void TestConvertJiraProjectToJiraJSONDefaultProject() throws Exception {
+    public void TestConvertJiraProjectToJiraJSONDefaultProject() {
         JiraProject jiraProject = new JiraProject();
 
         Converter converter = new Converter();
@@ -23,7 +24,7 @@ public class ConverterTest {
     }
 
     @Test
-    public void TestConvertFirefoxIssueToJiraIssue() throws Exception {
+    public void TestConvertFirefoxIssueToJiraIssue() {
         Converter c = new Converter();
 
         FirefoxIssue fi = new FirefoxIssue();
@@ -44,7 +45,7 @@ public class ConverterTest {
     }
 
     @Test
-    public void TestConvertJiraIssueToJiraJSON() throws Exception {
+    public void TestConvertJiraIssueToJiraJSON() {
         Converter c = new Converter();
 
         JiraIssue ji = new JiraIssue("666");
@@ -76,7 +77,7 @@ public class ConverterTest {
     }
 
     @Test
-    public void TestConstructorSetsProjectKey() throws Exception {
+    public void TestConstructorSetsProjectKey() {
         String projectKey = "PSD";
         Converter c = new Converter(projectKey);
 
@@ -85,7 +86,7 @@ public class ConverterTest {
     }
 
     @Test
-    public void TestConvertEmailAddressToJiraUserJson() throws Exception {
+    public void TestConvertEmailAddressToJiraUserJson() {
         Converter c = new Converter();
 
         String expectedJson = "{\n" +
@@ -95,6 +96,34 @@ public class ConverterTest {
                 "\"displayName\":\"sbrown1992@gmail.com\"\n" +
                 "}";
         String actualJson = c.convertUserToJiraJSON("sbrown1992@gmail.com");
+
+        assertEquals(expectedJson, actualJson);
+    }
+
+    @Test
+    public void TestSetProjectKey() {
+        Converter converter = new Converter();
+        String expectedProjectKey = "FRFX2";
+        converter.setProjectKey(expectedProjectKey);
+
+        String actualProjectKey = converter.getProjectKey();
+
+        assertEquals(expectedProjectKey, actualProjectKey);
+    }
+
+    @Test
+    public void TestConvertCommentToJiraJson() {
+        Converter converter = new Converter();
+
+        FirefoxComment firefoxComment = new FirefoxComment();
+        firefoxComment.setAuthorEmail("1106679b@student.gla.ac.uk");
+        firefoxComment.setCommentText("issue");
+        firefoxComment.setCreationTime("2018-01-31");
+
+        String expectedJson = "{\n" +
+                "\"body\":\"author: 1106679b@student.gla.ac.uk\\ncreated: 2018-01-31\\n\\nissue\"\n" +
+                "}";
+        String actualJson = converter.convertCommentToJiraJSON(firefoxComment);
 
         assertEquals(expectedJson, actualJson);
     }
