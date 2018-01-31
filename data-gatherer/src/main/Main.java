@@ -25,8 +25,6 @@ class Main {
     private static String jiraIP = "localhost";
     private static String jiraPort = "2990";
 
-    private static String USAGE = "data-gatherer.jar [maxIssuesToProcess] [jiraIP] [jiraPort]";
-
     public static void main(String[] args) {
 
         processCommandLineArguments(args);
@@ -106,10 +104,10 @@ class Main {
 
     private static void processCommandLineArguments(String[] args) {
         if (args.length != 3) {
-            System.err.println("Not enough arguments!");
-            System.err.println("Usage: " + USAGE);
+            logger.error("Not enough arguments!");
+            String USAGE = "data-gatherer.jar [maxIssuesToProcess] [jiraIP] [jiraPort]";
+            logger.error("Usage: " + USAGE);
             System.exit(1);
-            //throw new IllegalArgumentException("Not Enough Arguments");
         }
 
         maxIssuesToProcess = Integer.parseInt(args[0]);
