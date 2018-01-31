@@ -80,32 +80,34 @@ public class User {
     }
 
     public List<String> getAllWordsList(List<JiraIssue> issues) {
-        // Get every word the user has ever written
-        String everyWrittenWord = getAllWords(issues);
-
-        // Remove all the whitespace and punctuation
-        everyWrittenWord = everyWrittenWord.replace(',', ' ').replace('.', ' ').replace('(', ' ').replace(')', ' ');
-        everyWrittenWord = everyWrittenWord.replace('"', ' ').replace('>', ' ');
-
-        // Get every unique word the user has ever said
-        String[] allWordsArray = everyWrittenWord.split("\\s+");
+        String[] allWordsArray = getEveryWrittenWord(issues);
 
         return Arrays.asList(allWordsArray);
     }
 
     public Set<String> getAllUniqueWords(List<JiraIssue> issues) {
-        // Get every word the user has ever written
-        String everyWrittenWord = getAllWords(issues);
 
-        // Remove all the whitespace and punctuation
-        everyWrittenWord = everyWrittenWord.replace(',', ' ').replace('.', ' ').replace('(', ' ').replace(')', ' ');
-        everyWrittenWord = everyWrittenWord.replace('"', ' ').replace('>', ' ');
+        String[] allWordsArray = getEveryWrittenWord(issues);
 
-        // Get every unique word the user has ever said
-        String[] allWordsArray = everyWrittenWord.split("\\s+");
         List<String> allWords = Arrays.asList(allWordsArray);
 
         return new HashSet<>(allWords);
+    }
+
+    private String[] getEveryWrittenWord(List<JiraIssue> issues) {
+        // Get every word the user has ever written
+        String everyWrittenWord = getAllWords(issues);
+
+        everyWrittenWord = removePunctuation(everyWrittenWord);
+
+        return everyWrittenWord.split("\\s+");
+    }
+
+    private String removePunctuation(String everyWrittenWord) {
+        everyWrittenWord = everyWrittenWord.replace(',', ' ').replace('.', ' ').replace('(', ' ').replace(')', ' ');
+        everyWrittenWord = everyWrittenWord.replace('"', ' ').replace('>', ' ');
+
+        return everyWrittenWord;
     }
 
     public FrequencyTable getFrequencyTableFromUniqueWords(Set<String> uniqueWords, List<String> allWords) {
