@@ -5,7 +5,7 @@ public class FrequencyTableEntry {
     private int frequency;
 
     public FrequencyTableEntry(String word, int frequency) {
-        this.word = word;
+        this.word = word.toLowerCase();
         this.frequency = frequency;
     }
 
@@ -14,7 +14,7 @@ public class FrequencyTableEntry {
     }
 
     public void setWord(String word) {
-        this.word = word;
+        this.word = word.toLowerCase();
     }
 
     public int getFrequency() {
