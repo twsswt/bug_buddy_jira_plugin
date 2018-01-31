@@ -7,6 +7,13 @@
 1. cd into jira-hello-world/myPlugin
 1. run `atlas-run`
 
+## How to generate and run the data-gatherer binary
+1. Open IntelliJ Idea
+1. Add a jar in 'project structure' -> 'artifacts'
+1. Build artifacts
+1. Find the jar in out/artifacts/data\_gatherer\_jar
+1. Run the jar using `java -jar data-gatherer.jar`
+
 ## Evaluation Plan
 1. Post a set of X issues to JIRA using the 'evaluation-harness' codebase
 1. Download a set of X issues from JIRA using the 'recommender' codebase

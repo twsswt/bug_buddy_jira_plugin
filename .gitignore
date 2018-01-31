@@ -6,6 +6,7 @@ recommender/out
 # IDE stuff
 .idea
 *.iml
+*/src/META-INF
 
 # Libraries
 data-gatherer/lib
