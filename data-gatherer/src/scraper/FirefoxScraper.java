@@ -58,7 +58,7 @@ public class FirefoxScraper {
      * getIssueXML will download the XML version of the specified issue, and save
      * to a file called bugID.xml
      *
-     * @param issue The issue which we want to get an XML version of
+     * @param issue         The issue which we want to get an XML version of
      * @param xmlRootFolder where we want to store the downloaded xml
      * @return whether we needed to download the XML or not //TODO investigate if this is necessary...
      */
@@ -84,43 +84,34 @@ public class FirefoxScraper {
      * getIssueJSON will download the JSON version of the specified issue, and save
      * it to a file called bugID.json
      *
-     * @param issue The issue which we want to get an XML version of
+     * @param issue          The issue which we want to get an XML version of
      * @param jsonRootFolder where we want to store the downloaded json
      */
-    public void getIssueJSON(FirefoxIssue issue, String jsonRootFolder) {
-        try {
+    public boolean getIssueJSON(FirefoxIssue issue, String jsonRootFolder) {
 
-            String outputFilename = jsonRootFolder + issue.getBugID() + ".json";
-            File issueJSONFile = new File(outputFilename);
+        String outputFilename = jsonRootFolder + issue.getBugID() + ".json";
+        File issueJSONFile = new File(outputFilename);
 
-            if (!issueJSONFile.exists()) {
-                String issueURL = "https://bugzilla.mozilla.org/rest/bug/" + issue.getBugID() + "/comment";
+        if (!issueJSONFile.exists()) {
+            String issueURL = "https://bugzilla.mozilla.org/rest/bug/" + issue.getBugID() + "/comment";
 
+            StringBuilder jsonDocumentBuffer = new StringBuilder();
+            String jsonDocument = downloadPageContents(issueURL, jsonDocumentBuffer);
+            saveDataToFile(jsonDocument, issueJSONFile);
 
-                Process p = Runtime.getRuntime().exec("curl " + issueURL);
+            logger.info("Downloaded JSON for issue " + issue.getBugID());
+            return true;
 
-                InputStream stdout = p.getInputStream();
-                BufferedReader reader = new BufferedReader(new InputStreamReader(stdout));
-                StringBuilder jsonDocument = new StringBuilder();
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    jsonDocument.append(line);
-                }
-
-                p.waitFor();
-                saveDataToFile(jsonDocument.toString(), issueJSONFile);
-                logger.info("Downloaded JSON for issue " + issue.getBugID());
-            } else {
-                logger.info("Skipped Downloading JSON for issue " + issue.getBugID());
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+        } else {
+            logger.info("Skipped Downloading JSON for issue " + issue.getBugID());
+            return false;
         }
     }
 
     /**
      * saveDataToFile will save the contents of a string to the specified file
-     * @param data the data we wish to save
+     *
+     * @param data     the data we wish to save
      * @param filename the file we wish to save to
      */
     public void saveDataToFile(String data, File filename) {
@@ -185,7 +176,6 @@ public class FirefoxScraper {
                 comments.add(comment);
             }
 
-
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -197,6 +187,7 @@ public class FirefoxScraper {
     /**
      * extractIssueCommentsFromJSON will extract the comments of an issue
      * from a JSON document
+     *
      * @param issue the issue for which we wish to extract comments
      * @return A list containing each comment on the issue
      */
