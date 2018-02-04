@@ -25,9 +25,28 @@ class Main {
     private static String jiraIP = "localhost";
     private static String jiraPort = "2990";
 
+    protected static int getMaxIssuesToProcess() {
+        return maxIssuesToProcess;
+    }
+
+    protected static String getJiraIP() {
+        return jiraIP;
+    }
+
+    protected static String getJiraPort() {
+        return jiraPort;
+    }
+
     public static void main(String[] args) {
 
-        processCommandLineArguments(args);
+        try {
+            processCommandLineArguments(args);
+        } catch (IllegalArgumentException e) {
+            logger.error("Not enough arguments!");
+            String USAGE = "data-gatherer.jar [maxIssuesToProcess] [jiraIP] [jiraPort]";
+            logger.error("Usage: " + USAGE);
+            System.exit(1);
+        }
 
         ArrayList<FirefoxIssue> firefoxIssues = getIssueData();
 
@@ -35,54 +54,23 @@ class Main {
 
         Converter converter = new Converter();
 
-        // Create a JIRA Project json, and write to file
-        JiraProject jiraProject = new JiraProject();
-        String jiraProjectJson = converter.convertJiraProjectToJiraJSON(jiraProject);
-        String jiraProjectJsonFilename = jiraJSONLocation + "project.json";
+        createAndWriteJiraProject(jiraJSONLocation, converter);
 
-        writeJSONToFile(jiraProjectJson, jiraProjectJsonFilename);
-        logger.info("Written JSON for Project!");
+        Set<String> userEmails = getAllUniqueEmails(firefoxIssues);
 
-        // Get every unique email in the firefox issues data set
-        Set<String> userEmails = new HashSet<>();
-        for (FirefoxIssue issue : firefoxIssues) {
-            userEmails.add(issue.getAssigneeEmail());
-            userEmails.add(issue.getAssigneeEmail30Days());
-            userEmails.add(issue.getReporterEmail());
-        }
+        createAndWriteJiraUsers(jiraJSONLocation, converter, userEmails);
 
-        // Create Jira users from each email address, and write to a file
-        for (String email : userEmails) {
-            String userJson = converter.convertUserToJiraJSON(email);
-            String userJsonFilename = jiraJSONLocation + "users/" + email + ".json";
-
-            writeJSONToFile(userJson, userJsonFilename);
-        }
-        logger.info("Written JSON for all unique users");
-
-        // Create jira json from every issue, and write to a file
-        for (FirefoxIssue firefoxIssue : firefoxIssues) {
-            JiraIssue jiraIssue = converter.convertFirefoxIssueToJiraIssue(firefoxIssue);
-            String issueJson = converter.convertJiraIssueToJiraJSON(jiraIssue);
-            String issueJsonFilename = jiraJSONLocation + "issues/" + firefoxIssue.getBugID() + ".json";
-
-            writeJSONToFile(issueJson, issueJsonFilename);
-        }
-        logger.info("Written JSON for every issue");
+        createAndWriteJiraIssues(firefoxIssues, jiraJSONLocation, converter);
 
 
         // Post the project, then all users, then all issues to Jira
         Sender sender = new Sender(jiraIP, jiraPort);
-        sender.setIssueJSONLocation(jiraJSONLocation);
-        sender.sendPostCommand("project.json", "project");
-        logger.info("Posted Project to JIRA");
+        sendProjectToJira(jiraJSONLocation, sender);
+        sendUsersToJira(userEmails, sender);
+        sendIssuesAndCommentsToJira(firefoxIssues, jiraJSONLocation, converter, sender);
+    }
 
-        for (String email : userEmails) {
-            String emailJSONFilename = "users/" + email + ".json";
-            sender.sendPostCommand(emailJSONFilename, "user");
-        }
-        logger.info("Posted all users to JIRA");
-
+    private static void sendIssuesAndCommentsToJira(ArrayList<FirefoxIssue> firefoxIssues, String jiraJSONLocation, Converter converter, Sender sender) {
         for (FirefoxIssue firefoxIssue : firefoxIssues) {
             String issueID = sender.sendPostCommandExtractIssueID("issues/" + firefoxIssue.getBugID() + ".json", "issue");
 
@@ -102,12 +90,66 @@ class Main {
         logger.info("Posted all issues and comments to JIRA");
     }
 
-    private static void processCommandLineArguments(String[] args) {
+    private static void sendUsersToJira(Set<String> userEmails, Sender sender) {
+        for (String email : userEmails) {
+            String emailJSONFilename = "users/" + email + ".json";
+            sender.sendPostCommand(emailJSONFilename, "user");
+        }
+        logger.info("Posted all users to JIRA");
+    }
+
+    private static void sendProjectToJira(String jiraJSONLocation, Sender sender) {
+        sender.setIssueJSONLocation(jiraJSONLocation);
+        sender.sendPostCommand("project.json", "project");
+        logger.info("Posted Project to JIRA");
+    }
+
+    private static void createAndWriteJiraIssues(ArrayList<FirefoxIssue> firefoxIssues, String jiraJSONLocation, Converter converter) {
+        // Create jira json from every issue, and write to a file
+        for (FirefoxIssue firefoxIssue : firefoxIssues) {
+            JiraIssue jiraIssue = converter.convertFirefoxIssueToJiraIssue(firefoxIssue);
+            String issueJson = converter.convertJiraIssueToJiraJSON(jiraIssue);
+            String issueJsonFilename = jiraJSONLocation + "issues/" + firefoxIssue.getBugID() + ".json";
+
+            writeJSONToFile(issueJson, issueJsonFilename);
+        }
+        logger.info("Written JSON for every issue");
+    }
+
+    private static void createAndWriteJiraUsers(String jiraJSONLocation, Converter converter, Set<String> userEmails) {
+        // Create Jira users from each email address, and write to a file
+        for (String email : userEmails) {
+            String userJson = converter.convertUserToJiraJSON(email);
+            String userJsonFilename = jiraJSONLocation + "users/" + email + ".json";
+
+            writeJSONToFile(userJson, userJsonFilename);
+        }
+        logger.info("Written JSON for all unique users");
+    }
+
+    private static Set<String> getAllUniqueEmails(List<FirefoxIssue> firefoxIssues) {
+        Set<String> userEmails = new HashSet<>();
+        for (FirefoxIssue issue : firefoxIssues) {
+            userEmails.add(issue.getAssigneeEmail());
+            userEmails.add(issue.getAssigneeEmail30Days());
+            userEmails.add(issue.getReporterEmail());
+        }
+        return userEmails;
+    }
+
+    private static void createAndWriteJiraProject(String jiraJSONLocation, Converter converter) {
+        // Create a JIRA Project json, and write to file
+        JiraProject jiraProject = new JiraProject();
+        String jiraProjectJson = converter.convertJiraProjectToJiraJSON(jiraProject);
+        String jiraProjectJsonFilename = jiraJSONLocation + "project.json";
+
+        writeJSONToFile(jiraProjectJson, jiraProjectJsonFilename);
+        logger.info("Written JSON for Project!");
+    }
+
+    protected static void processCommandLineArguments(String[] args) {
         if (args.length != 3) {
-            logger.error("Not enough arguments!");
-            String USAGE = "data-gatherer.jar [maxIssuesToProcess] [jiraIP] [jiraPort]";
-            logger.error("Usage: " + USAGE);
-            System.exit(1);
+            throw new IllegalArgumentException("Not Enough Arguments!");
         }
 
         maxIssuesToProcess = Integer.parseInt(args[0]);
