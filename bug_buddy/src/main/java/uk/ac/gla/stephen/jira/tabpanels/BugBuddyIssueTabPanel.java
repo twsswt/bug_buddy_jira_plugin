@@ -16,13 +16,23 @@ public class BugBuddyIssueTabPanel extends AbstractIssueTabPanel implements Issu
     private static final Logger log = LoggerFactory.getLogger(BugBuddyIssueTabPanel.class);
 
     public List getActions(Issue issue, ApplicationUser remoteUser) {
+        String recommendedEmail = getRecommendedEmail(issue);
+
         List<IssueAction> list = new ArrayList<>();
         list.add(new GenericMessageAction("This is where the auto-assign button should be!"));
-        list.add(new GenericMessageAction("We recommend assigning this issue to tim.storer@gla.ac.uk"));
+        list.add(new GenericMessageAction("We recommend assigning this issue to " + recommendedEmail));
         return list;
     }
 
     public boolean showPanel(Issue issue, ApplicationUser remoteUser) {
         return true;
+    }
+
+    public String getRecommendedEmail(Issue issue) {
+
+        long issueId = issue.getId();
+
+        return "tim.storer3@gla.ac.uk";
+
     }
 }
