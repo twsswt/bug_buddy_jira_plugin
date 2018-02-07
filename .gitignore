@@ -12,4 +12,5 @@ recommender/out
 data-gatherer/lib
 
 # Data
-project-issue-data/*
+data-gatherer/project-issue-data/*/FirefoxIssueJSON
+data-gatherer/project-issue-data/*/JiraJSON

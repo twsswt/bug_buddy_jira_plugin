@@ -24,8 +24,8 @@ import java.util.ArrayList;
  * into an appropriate data structure (see package evaluationStructures)
  */
 public class FirefoxScraper {
-    private static final String DEFAULT_FIREFOX_ISSUE_XML_LOCATION = "../project-issue-data/bugreport.mozilla.firefox/FirefoxIssueXML/";
-    private static final String DEFAULT_FIREFOX_ISSUE_JSON_LOCATION = "../project-issue-data/bugreport.mozilla.firefox/FirefoxIssueJSON/";
+    private static final String DEFAULT_FIREFOX_ISSUE_XML_LOCATION = "project-issue-data/bugreport.mozilla.firefox/FirefoxIssueXML/";
+    private static final String DEFAULT_FIREFOX_ISSUE_JSON_LOCATION = "project-issue-data/bugreport.mozilla.firefox/FirefoxIssueJSON/";
     private static final Logger logger = LogManager.getLogger(FirefoxScraper.class);
     private String issueXMLDataLocation;
     private String issueJSONDataLocation;

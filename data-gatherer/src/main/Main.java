@@ -50,7 +50,7 @@ class Main {
 
         ArrayList<FirefoxIssue> firefoxIssues = getIssueData();
 
-        String jiraJSONLocation = "../project-issue-data/bugreport.mozilla.firefox/JiraJSON/";
+        String jiraJSONLocation = "project-issue-data/bugreport.mozilla.firefox/JiraJSON/";
 
         Converter converter = new Converter();
 
@@ -164,7 +164,7 @@ class Main {
 
         List<FirefoxIssue> allIssues = new ArrayList<>();
         try {
-            allIssues = reader.readIssuesFromCSV("../project-issue-data/bugreport.mozilla.firefox/mozilla_firefox_bugmeasures.csv");
+            allIssues = reader.readIssuesFromCSV("project-issue-data/bugreport.mozilla.firefox/mozilla_firefox_bugmeasures.csv");
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
@@ -181,7 +181,7 @@ class Main {
 
         for (int i = 0; i < maxIssuesToProcess; i++) {
             logger.info("Processing issue " + (i + 1) + "/" + maxIssuesToProcess);
-            scraper.getIssueJSON(issues.get(i), ("../project-issue-data/bugreport.mozilla.firefox/FirefoxIssueJSON/"));
+            scraper.getIssueJSON(issues.get(i), ("project-issue-data/bugreport.mozilla.firefox/FirefoxIssueJSON/"));
 
             ArrayList<FirefoxComment> comments = scraper.extractIssueCommentsFromJSON(issues.get(i));
             issues.get(i).setComments(comments);
