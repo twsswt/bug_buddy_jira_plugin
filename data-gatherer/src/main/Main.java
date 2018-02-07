@@ -127,13 +127,14 @@ class Main {
         logger.info("Written JSON for all unique users");
     }
 
-    private static Set<String> getAllUniqueEmails(List<FirefoxIssue> firefoxIssues) {
+    protected static Set<String> getAllUniqueEmails(List<FirefoxIssue> firefoxIssues) {
         Set<String> userEmails = new HashSet<>();
         for (FirefoxIssue issue : firefoxIssues) {
             userEmails.add(issue.getAssigneeEmail());
             userEmails.add(issue.getAssigneeEmail30Days());
             userEmails.add(issue.getReporterEmail());
         }
+        userEmails.remove(null);
         return userEmails;
     }
 
