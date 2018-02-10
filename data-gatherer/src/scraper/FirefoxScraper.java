@@ -74,7 +74,7 @@ public class FirefoxScraper {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            
+
             logger.info("Downloaded JSON for issue " + issue.getBugID());
             return true;
         }
