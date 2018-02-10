@@ -14,3 +14,6 @@ data-gatherer/lib
 # Data
 data-gatherer/project-issue-data/*/FirefoxIssueJSON
 data-gatherer/project-issue-data/*/JiraJSON
+
+# Outputs
+data-gatherer/bin/*
