@@ -1,5 +1,7 @@
 package sender;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -65,12 +67,14 @@ public class Sender {
     public void sendPostCommand(String filename, String apiSection) {
 
         String curlCommand = CURL_POST_PREFIX + issueJSONLocation + filename + CURL_POST_MIDFIX + this.jiraAPILocation + apiSection;
-        String returnedJSON = sendCurlCommand(curlCommand);
+        String returnedJsonString = sendCurlCommand(curlCommand);
 
-        if (returnedJSON.charAt(2) == 'e') {
-            logger.warn("Issue posting " + filename);
-            logger.warn(returnedJSON);
+        JsonObject returnedJson = new JsonParser().parse(returnedJsonString).getAsJsonObject();
+        if (returnedJson.has("errors")) {
+            logger.warn("issue posting " + filename);
+            logger.warn(returnedJsonString);
         }
+
     }
 
     /**
@@ -93,6 +97,7 @@ public class Sender {
 
     /**
      * This function sends a curl command, and returns the JSON returned by curl
+     *
      * @param curlCommand the command to send
      * @return the json returned by curl
      */
