@@ -59,12 +59,11 @@ public class FirefoxScraper {
      * to a file called bugID.xml
      *
      * @param issue         The issue which we want to get an XML version of
-     * @param xmlRootFolder where we want to store the downloaded xml
      * @return whether we needed to download the XML or not //TODO investigate if this is necessary...
      */
-    public boolean getIssueXML(FirefoxIssue issue, String xmlRootFolder) {
+    public boolean getIssueXML(FirefoxIssue issue) {
         String issueURL = "https://bugzilla.mozilla.org/show_bug.cgi?ctype=xml&id=" + issue.getBugID();
-        String outputFilename = xmlRootFolder + issue.getBugID() + ".xml";
+        String outputFilename = issueXMLDataLocation + issue.getBugID() + ".xml";
 
         File issueXMLFile = new File(outputFilename);
 
@@ -85,13 +84,12 @@ public class FirefoxScraper {
      * it to a file called bugID.json
      *
      * @param issue          The issue which we want to get an XML version of
-     * @param jsonRootFolder where we want to store the downloaded json
      */
-    public boolean getIssueJSON(FirefoxIssue issue, String jsonRootFolder) {
+    public boolean getIssueJSON(FirefoxIssue issue) {
 
         try {
 
-            String outputFilename = jsonRootFolder + issue.getBugID() + ".json";
+            String outputFilename = issueJSONDataLocation + issue.getBugID() + ".json";
             File issueJSONFile = new File(outputFilename);
 
             if (!issueJSONFile.exists()) {

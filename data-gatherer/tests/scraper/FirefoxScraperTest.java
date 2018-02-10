@@ -17,16 +17,18 @@ public class FirefoxScraperTest {
     @Test(timeout = 100)
     public void ensureGetIssueXMLSkipsAlreadyExistingXML() throws Exception {
         FirefoxScraper s = new FirefoxScraper();
+        s.setIssueXMLDataLocation("tests/test-xml-files/");
         FirefoxIssue testIssue = new FirefoxIssue();
         testIssue.setBugID(212779);
 
-        boolean downloaded = s.getIssueXML(testIssue, "tests/test-xml-files/");
+        boolean downloaded = s.getIssueXML(testIssue);
         assertFalse(downloaded);
     }
 
     @Test
     public void ensureGetIssueXMLDownloadsNotExistingXML() throws Exception {
         FirefoxScraper s = new FirefoxScraper();
+        s.setIssueXMLDataLocation("tests/test-xml-files/");
         FirefoxIssue testIssue = new FirefoxIssue();
         testIssue.setBugID(212778);
 
@@ -34,7 +36,7 @@ public class FirefoxScraperTest {
         File xmlFile = new File("tests/test-xml-files/212778.xml");
         Files.deleteIfExists(xmlFile.toPath());
 
-        boolean downloaded = s.getIssueXML(testIssue, "tests/test-xml-files/");
+        boolean downloaded = s.getIssueXML(testIssue);
         assertTrue(downloaded);
 
     }
@@ -44,16 +46,18 @@ public class FirefoxScraperTest {
     @Test(timeout = 100)
     public void ensureGetIssueJsonSkipsAlreadyExistingJson() {
         FirefoxScraper s = new FirefoxScraper();
+        s.setIssueJSONDataLocation("tests/test-xml-files/");
         FirefoxIssue testIssue = new FirefoxIssue();
         testIssue.setBugID(212779);
 
-        boolean downloaded = s.getIssueJSON(testIssue, "tests/test-xml-files/");
+        boolean downloaded = s.getIssueJSON(testIssue);
         assertFalse(downloaded);
     }
 
     @Test
     public void ensureGetIssueJsonDownloadsNotExistingJson() throws Exception {
         FirefoxScraper s = new FirefoxScraper();
+        s.setIssueJSONDataLocation("tests/test-xml-files/");
         FirefoxIssue testIssue = new FirefoxIssue();
         testIssue.setBugID(212778);
 
@@ -61,7 +65,7 @@ public class FirefoxScraperTest {
         File jsonFile = new File("tests/test-xml-files/212778.json");
         Files.deleteIfExists(jsonFile.toPath());
 
-        boolean downloaded = s.getIssueJSON(testIssue, "tests/test-xml-files/");
+        boolean downloaded = s.getIssueJSON(testIssue);
         assertTrue(downloaded);
 
     }

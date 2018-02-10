@@ -200,7 +200,7 @@ class Main {
 
         for (int i = 0; i < maxIssuesToProcess; i++) {
             logger.info("Processing issue " + (i + 1) + "/" + maxIssuesToProcess);
-            scraper.getIssueJSON(issues.get(i), FIREFOX_ISSUE_PATH + "/FirefoxIssueJSON/");
+            scraper.getIssueJSON(issues.get(i));
 
             ArrayList<FirefoxComment> comments = scraper.extractIssueCommentsFromJSON(issues.get(i));
             issues.get(i).setComments(comments);
