@@ -8,13 +8,15 @@ import java.util.ArrayList;
 
 public class Main {
 
+    private static String jiraIP = "localhost";
+    private static String jiraPort = "2990";
 
     /**
      * Identifies which matching algorithm to use based
      * on the command line arguments passed
      */
     private static void parseCommandLineArguments(String args[], Matcher matcher) {
-        if (args.length != 1) {
+        if (args.length != 3) {
             throw new IllegalArgumentException();
         }
 
@@ -29,6 +31,9 @@ public class Main {
                 matcher.setMatchingAlgorithm(Matcher.MatchingAlgorithm.WORD_BASED);
                 break;
         }
+
+        jiraIP = args[1];
+        jiraPort = args[2];
     }
 
     private static String generateUsageString() {
@@ -65,7 +70,7 @@ public class Main {
 
 
         // Get all issues from a jira instance
-        Puller p = new Puller("localhost", "2990");
+        Puller p = new Puller(jiraIP, jiraPort);
         ArrayList<JiraIssue> jiraIssues = p.getAllIssues();
 
         // Assign every issue to a user, and determine if our assignment was the same
