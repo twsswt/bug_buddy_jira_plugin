@@ -16,3 +16,7 @@ data-gatherer/project-issue-data/*/JiraJSON
 
 # Outputs
 data-gatherer/bin/*
+data-gatherer/data-gatherer.jar
+
+# Debug logs
+*/log.txt
