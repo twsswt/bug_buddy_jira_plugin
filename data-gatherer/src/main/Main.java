@@ -13,6 +13,9 @@ import sender.Sender;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -49,6 +52,8 @@ class Main {
             System.exit(1);
         }
 
+        createFolders();
+
         ArrayList<FirefoxIssue> firefoxIssues = getIssueData();
 
         String jiraJSONLocation = FIREFOX_ISSUE_PATH + "/JiraJSON/";
@@ -71,6 +76,18 @@ class Main {
         sendIssuesAndCommentsToJira(firefoxIssues, jiraJSONLocation, converter, sender);
     }
 
+    private static void createFolders() {
+        try {
+            Files.createDirectories(Paths.get("project-issue-data/bugreport.mozilla.firefox/FirefoxIssueJSON"));
+            Files.createDirectories(Paths.get("project-issue-data/bugreport.mozilla.firefox/FirefoxIssueXML"));
+            Files.createDirectories(Paths.get("project-issue-data/bugreport.mozilla.firefox/JiraJSON"));
+            Files.createDirectories(Paths.get("project-issue-data/bugreport.mozilla.firefox/JiraJSON/comments"));
+            Files.createDirectories(Paths.get("project-issue-data/bugreport.mozilla.firefox/JiraJSON/issues"));
+            Files.createDirectories(Paths.get("project-issue-data/bugreport.mozilla.firefox/JiraJSON/users"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
     private static void sendIssuesAndCommentsToJira(ArrayList<FirefoxIssue> firefoxIssues, String jiraJSONLocation, Converter converter, Sender sender) {
         for (FirefoxIssue firefoxIssue : firefoxIssues) {
             String issueID = sender.sendPostCommandExtractIssueID("issues/" + firefoxIssue.getBugID() + ".json", "issue");
