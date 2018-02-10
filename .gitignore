@@ -17,6 +17,10 @@ data-gatherer/project-issue-data/*/JiraJSON
 # Outputs
 data-gatherer/bin/*
 data-gatherer/data-gatherer.jar
+recommender/recommender.jar
 
 # Debug logs
 */log.txt
+
+# Temp editor files
+*.swp

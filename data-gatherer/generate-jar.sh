@@ -37,3 +37,4 @@ mv $downloaded_data_new/JiraJSON $downloaded_data/JiraJSON
 rm -r $downloaded_data_new
 rm -r META-INF
 rm log4j2.xml
+rm -r bin
