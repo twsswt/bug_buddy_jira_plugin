@@ -53,6 +53,7 @@ public class Main {
     public static void main(String[] args) {
 
         Matcher matcher = new Matcher();
+        
         try {
             parseCommandLineArguments(args, matcher);
         } catch (IllegalArgumentException e) {
