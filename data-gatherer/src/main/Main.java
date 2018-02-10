@@ -88,6 +88,7 @@ class Main {
             e.printStackTrace();
         }
     }
+
     private static void sendIssuesAndCommentsToJira(ArrayList<FirefoxIssue> firefoxIssues, String jiraJSONLocation, Converter converter, Sender sender) {
         for (FirefoxIssue firefoxIssue : firefoxIssues) {
             String issueID = sender.sendPostCommandExtractIssueID("issues/" + firefoxIssue.getBugID() + ".json", "issue");
