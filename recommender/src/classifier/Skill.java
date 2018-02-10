@@ -4,12 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Skill {
-    @Override
-    public String toString() {
-        return "Skill{" +
-                "name='" + name + '\'' +
-                '}';
-    }
 
     private String name;
     private List<String> keywords;
@@ -37,5 +31,13 @@ public class Skill {
 
     public void addKeyword(String keyword) {
         keywords.add(keyword);
+    }
+
+    @Override
+    public String toString() {
+        return "Skill{" +
+                "name='" + name + '\'' +
+                ", keywords=" + keywords +
+                '}';
     }
 }
