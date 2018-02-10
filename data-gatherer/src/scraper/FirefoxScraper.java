@@ -89,23 +89,37 @@ public class FirefoxScraper {
      */
     public boolean getIssueJSON(FirefoxIssue issue, String jsonRootFolder) {
 
-        String outputFilename = jsonRootFolder + issue.getBugID() + ".json";
-        File issueJSONFile = new File(outputFilename);
+        try {
 
-        if (!issueJSONFile.exists()) {
-            String issueURL = "https://bugzilla.mozilla.org/rest/bug/" + issue.getBugID() + "/comment";
+            String outputFilename = jsonRootFolder + issue.getBugID() + ".json";
+            File issueJSONFile = new File(outputFilename);
 
-            StringBuilder jsonDocumentBuffer = new StringBuilder();
-            String jsonDocument = downloadPageContents(issueURL, jsonDocumentBuffer);
-            saveDataToFile(jsonDocument, issueJSONFile);
+            if (!issueJSONFile.exists()) {
+                String issueURL = "https://bugzilla.mozilla.org/rest/bug/" + issue.getBugID() + "/comment";
 
-            logger.info("Downloaded JSON for issue " + issue.getBugID());
-            return true;
 
-        } else {
-            logger.info("Skipped Downloading JSON for issue " + issue.getBugID());
-            return false;
+                Process p = Runtime.getRuntime().exec("curl " + issueURL);
+
+                InputStream stdout = p.getInputStream();
+                BufferedReader reader = new BufferedReader(new InputStreamReader(stdout));
+                StringBuilder jsonDocument = new StringBuilder();
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    jsonDocument.append(line);
+                }
+
+                p.waitFor();
+                saveDataToFile(jsonDocument.toString(), issueJSONFile);
+                logger.info("Downloaded JSON for issue " + issue.getBugID());
+                return true;
+            } else {
+                logger.info("Skipped Downloading JSON for issue " + issue.getBugID());
+                return false;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+        return false;
     }
 
     /**
