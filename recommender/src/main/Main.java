@@ -37,7 +37,7 @@ public class Main {
     }
 
     private static String generateUsageString() {
-        StringBuilder usageBuilder = new StringBuilder("recommender.jar [algorithmToEvaluate]\n");
+        StringBuilder usageBuilder = new StringBuilder("recommender.jar [algorithmToEvaluate] [jiraIP] [jiraPort]\n");
 
         usageBuilder.append("Algorithms available:\n");
         usageBuilder.append("word\n");
@@ -53,7 +53,7 @@ public class Main {
     public static void main(String[] args) {
 
         Matcher matcher = new Matcher();
-        
+
         try {
             parseCommandLineArguments(args, matcher);
         } catch (IllegalArgumentException e) {
