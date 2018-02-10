@@ -46,15 +46,19 @@ public class FirefoxScraper {
      */
     public boolean getIssueJSON(FirefoxIssue issue) {
 
-        try {
+        String outputFilename = issueJSONDataLocation + issue.getBugID() + ".json";
+        File issueJSONFile = new File(outputFilename);
 
-            String outputFilename = issueJSONDataLocation + issue.getBugID() + ".json";
-            File issueJSONFile = new File(outputFilename);
+        if (issueJSONFile.exists()) {
 
-            if (!issueJSONFile.exists()) {
-                String issueURL = "https://bugzilla.mozilla.org/rest/bug/" + issue.getBugID() + "/comment";
+            logger.info("Skipped Downloading JSON for issue " + issue.getBugID());
+            return false;
 
+        } else {
 
+            String issueURL = "https://bugzilla.mozilla.org/rest/bug/" + issue.getBugID() + "/comment";
+
+            try {
                 Process p = Runtime.getRuntime().exec("curl " + issueURL);
 
                 InputStream stdout = p.getInputStream();
@@ -67,16 +71,13 @@ public class FirefoxScraper {
 
                 p.waitFor();
                 saveDataToFile(jsonDocument.toString(), issueJSONFile);
-                logger.info("Downloaded JSON for issue " + issue.getBugID());
-                return true;
-            } else {
-                logger.info("Skipped Downloading JSON for issue " + issue.getBugID());
-                return false;
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-        } catch (Exception e) {
-            e.printStackTrace();
+            
+            logger.info("Downloaded JSON for issue " + issue.getBugID());
+            return true;
         }
-        return false;
     }
 
     /**
