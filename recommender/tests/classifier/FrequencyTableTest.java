@@ -2,6 +2,8 @@ package classifier;
 
 import org.junit.Test;
 
+import java.util.ArrayList;
+
 import static org.junit.Assert.*;
 
 public class FrequencyTableTest {
@@ -71,5 +73,38 @@ public class FrequencyTableTest {
         int totalWords = ft.getTotalWords();
 
         assertEquals(13, totalWords);
+    }
+
+    @Test
+    public void testSetEntries() {
+        FrequencyTable ft = new FrequencyTable();
+
+        ArrayList<FrequencyTableEntry> expectedEntries = new ArrayList<>();
+        expectedEntries.add(new FrequencyTableEntry("Cats", 7));
+        expectedEntries.add(new FrequencyTableEntry("Dogs", 6));
+
+        ft.setEntries(expectedEntries);
+
+        ArrayList<FrequencyTableEntry> actualEntries = ft.getEntries();
+
+        assertEquals(expectedEntries, actualEntries);
+    }
+
+    @Test
+    public void testToString() {
+        FrequencyTable ft = new FrequencyTable();
+
+        ArrayList<FrequencyTableEntry> entries = new ArrayList<>();
+        entries.add(new FrequencyTableEntry("Cats", 7));
+        entries.add(new FrequencyTableEntry("Dogs", 6));
+
+        ft.setEntries(entries);
+
+        String expectedString = "FrequencyTable{entries=[FrequencyTableEntry{word='cats', frequency=7}, FrequencyTableEntry{word='dogs', frequency=6}]}";
+        String actualString = ft.toString();
+
+        assertEquals(expectedString, actualString);
+
+
     }
 }
