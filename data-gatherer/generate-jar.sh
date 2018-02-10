@@ -1,5 +1,7 @@
 #!/bin/bash
 
+rm data-gatherer.jar
+
 downloaded_data="project-issue-data/bugreport.mozilla.firefox"
 downloaded_data_new="temp_data_store"
 
