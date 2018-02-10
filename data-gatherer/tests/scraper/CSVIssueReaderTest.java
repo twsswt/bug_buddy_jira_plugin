@@ -13,7 +13,7 @@ public class CSVIssueReaderTest {
     public void ensureReadIssuesFromCSVReadsSingleIssueCorrectly() throws Exception {
         CSVIssueReader reader = new CSVIssueReader();
 
-        ArrayList<FirefoxIssue> issues = reader.readIssuesFromCSV("tests/test-xml-files/firefox-1.csv");
+        ArrayList<FirefoxIssue> issues = reader.readIssuesFromCSV("tests/test-files/firefox-1.csv");
         FirefoxIssue expectedIssue = new FirefoxIssue();
         expectedIssue.setBugID(249601);
         expectedIssue.setComponent("Location Bar and Autocomplete");
