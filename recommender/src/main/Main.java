@@ -14,16 +14,32 @@ public class Main {
      * on the command line arguments passed
      */
     private static void parseCommandLineArguments(String args[], Matcher matcher) {
-        if (args.length == 0) {
-            matcher.setMatchingAlgorithm(Matcher.MatchingAlgorithm.WORD_BASED);
+        if (args.length != 1) {
+            throw new IllegalArgumentException();
         }
-        if (args[0].equals("skills")) {
-            matcher.setMatchingAlgorithm(Matcher.MatchingAlgorithm.SKILLS_BASED);
-        } else {
-            matcher.setMatchingAlgorithm(Matcher.MatchingAlgorithm.WORD_BASED);
+
+        switch (args[0]) {
+            case "skills":
+                matcher.setMatchingAlgorithm(Matcher.MatchingAlgorithm.SKILLS_BASED);
+                break;
+            case "word":
+                matcher.setMatchingAlgorithm(Matcher.MatchingAlgorithm.WORD_BASED);
+                break;
+            default:
+                matcher.setMatchingAlgorithm(Matcher.MatchingAlgorithm.WORD_BASED);
+                break;
         }
     }
 
+    private static String generateUsageString() {
+        StringBuilder usageBuilder = new StringBuilder("recommender.jar [algorithmToEvaluate]\n");
+
+        usageBuilder.append("Algorithms available:\n");
+        usageBuilder.append("word\n");
+        usageBuilder.append("skills");
+
+        return usageBuilder.toString();
+    }
 
     /**
      * runs the given matching algorithm over the entire data set, and determines
@@ -32,7 +48,14 @@ public class Main {
     public static void main(String[] args) {
 
         Matcher matcher = new Matcher();
-        parseCommandLineArguments(args, matcher);
+        try {
+            parseCommandLineArguments(args, matcher);
+        } catch (IllegalArgumentException e) {
+            System.err.println("Not enough arguments!");
+            String USAGE = generateUsageString();
+            System.err.println("Usage: " + USAGE);
+            System.exit(1);
+        }
 
         if (matcher.getMatchingAlgorithm() == Matcher.MatchingAlgorithm.SKILLS_BASED) {
             matcher.initialiseGlobalSkills();
