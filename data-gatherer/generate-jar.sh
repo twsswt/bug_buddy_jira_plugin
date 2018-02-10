@@ -17,7 +17,7 @@ mkdir META-INF
 javac -d bin $full_classpath $all_sources
 
 cp -r src/META-INF .
-cat META-INF/MANIFEST.MF
+cp src/log4j2.xml log4j2.xml
 
 # Move already downloaded data somewhere else, so it doesn't mess up the JAR
 mv $downloaded_data/FirefoxIssueJSON $downloaded_data_new/FirefoxIssueJSON
@@ -25,7 +25,7 @@ mv $downloaded_data/FirefoxIssueXML $downloaded_data_new/FirefoxIssueXML
 mv $downloaded_data/JiraJSON $downloaded_data_new/JiraJSON
 
 # Combine them into a jar
-jar cvmf META-INF/MANIFEST.MF data-gatherer.jar -C bin . project-issue-data 
+jar cvmf META-INF/MANIFEST.MF data-gatherer.jar -C bin . project-issue-data log4j2.xml
 
 # Move the data back
 mv $downloaded_data_new/FirefoxIssueJSON $downloaded_data/FirefoxIssueJSON
@@ -34,3 +34,4 @@ mv $downloaded_data_new/JiraJSON $downloaded_data/JiraJSON
 
 rm -r $downloaded_data_new
 rm -r META-INF
+rm log4j2.xml
