@@ -37,13 +37,10 @@ public class Main {
     }
 
     private static String generateUsageString() {
-        StringBuilder usageBuilder = new StringBuilder("recommender.jar [algorithmToEvaluate] [jiraIP] [jiraPort]\n");
 
-        usageBuilder.append("Algorithms available:\n");
-        usageBuilder.append("word\n");
-        usageBuilder.append("skills");
-
-        return usageBuilder.toString();
+        return "recommender.jar [algorithmToEvaluate] [jiraIP] [jiraPort]\n" + "Algorithms available:\n" +
+                "word\n" +
+                "skills";
     }
 
     /**
