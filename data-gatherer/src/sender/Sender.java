@@ -74,7 +74,6 @@ public class Sender {
             logger.warn("issue posting " + filename);
             logger.warn(returnedJsonString);
         }
-
     }
 
     /**
@@ -114,7 +113,7 @@ public class Sender {
             String line;
             while ((line = reader.readLine()) != null) {
                 returnedJSON = line;
-                logger.debug("Sending: " + line);
+                logger.debug("Receiving: " + line);
             }
         } catch (Exception e) {
             e.printStackTrace();

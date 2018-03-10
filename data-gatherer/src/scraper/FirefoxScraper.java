@@ -114,23 +114,28 @@ public class FirefoxScraper {
             String rawJsonContent = new String(Files.readAllBytes(Paths.get(issueFilename)));
             JsonObject jsonContent = new JsonParser().parse(rawJsonContent).getAsJsonObject();
 
+            // Find list of comments
             JsonObject jsonBug = jsonContent.get("bugs").getAsJsonObject();
             JsonObject jsonBugID = jsonBug.get(bugIDString).getAsJsonObject();
             JsonArray jsonComments = jsonBugID.get("comments").getAsJsonArray();
 
-
+            // Extract data from each comment
             for (int i = 0; i < jsonComments.size(); i++) {
                 FirefoxComment firefoxComment = new FirefoxComment();
                 JsonObject jsonComment = jsonComments.get(i).getAsJsonObject();
+
                 firefoxComment.setCommentText(jsonComment.get("raw_text").getAsString());
                 firefoxComment.setAuthorEmail(jsonComment.get("author").getAsString());
                 firefoxComment.setCreationTime(jsonComment.get("creation_time").getAsString());
+
                 comments.add(firefoxComment);
             }
 
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+
         logger.info("Extracted " + comments.size() + " comments for issue " + issue.getBugID());
         return comments;
     }
