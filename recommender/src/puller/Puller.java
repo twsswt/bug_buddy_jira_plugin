@@ -4,6 +4,8 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -11,6 +13,9 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 public class Puller {
+
+    private static final Logger logger = LogManager.getLogger(Puller.class);
+
     private final String jiraIP;
     private final String jiraPort;
     private String jiraAPILocation;
@@ -37,7 +42,7 @@ public class Puller {
         boolean pulledNewIssues;
 
         do {
-            System.out.println("Pulling block starting at: " + startAt);
+            logger.info("Pulling block starting at: " + startAt);
             ArrayList<JiraIssue> newIssues = getIssueBlock(startAt);
             pulledNewIssues = newIssues.size() > 0;
             startAt += 100;
@@ -81,7 +86,7 @@ public class Puller {
 
             int counter = 0;
             for (JsonElement jsonIssue : jsonIssues) {
-                System.out.println("Pulling issue: " + (++counter));
+                logger.info("Pulling issue: " + (++counter));
                 issues.add(convertJsonIssueToJiraIssue(jsonIssue.getAsJsonObject()));
             }
 

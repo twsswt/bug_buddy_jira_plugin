@@ -1,12 +1,16 @@
 package main;
 
 import matcher.Matcher;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import puller.JiraIssue;
 import puller.Puller;
 
 import java.util.ArrayList;
 
 public class Main {
+
+    private static final Logger logger = LogManager.getLogger(Main.class);
 
     private static String jiraIP = "localhost";
     private static String jiraPort = "2990";
@@ -54,9 +58,9 @@ public class Main {
         try {
             parseCommandLineArguments(args, matcher);
         } catch (IllegalArgumentException e) {
-            System.err.println("Not enough arguments!");
+            logger.error("Not enough arguments!");
             String USAGE = generateUsageString();
-            System.err.println("Usage: " + USAGE);
+            logger.error("Usage: " + USAGE);
             System.exit(1);
         }
 
@@ -79,8 +83,7 @@ public class Main {
             }
         }
 
-        System.out.println("");
-        System.out.println("Matched " + successfulMatches + "/" + jiraIssues.size());
+        logger.info("Matched " + successfulMatches + "/" + jiraIssues.size());
     }
 
 

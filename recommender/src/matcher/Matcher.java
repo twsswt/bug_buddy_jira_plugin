@@ -4,6 +4,8 @@ import classifier.FrequencyTable;
 import classifier.FrequencyTableEntry;
 import classifier.Skill;
 import classifier.User;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import puller.JiraIssue;
 
 import java.util.ArrayList;
@@ -12,6 +14,8 @@ import java.util.List;
 import java.util.Set;
 
 public class Matcher {
+
+    private static final Logger logger = LogManager.getLogger(Matcher.class);
 
     private MatchingAlgorithm matchingAlgorithm;
     private List<Skill> globalSkills;
@@ -94,13 +98,13 @@ public class Matcher {
                 break;
             }
             default: {
-                System.out.println("Please choose a recommendation method");
+                logger.warn("Please choose a recommendation method");
                 break;
             }
         }
 
 
-        System.out.println("We recommend you assign this issue to " + recommendedEmail);
+        logger.info("We recommend you assign this issue to " + recommendedEmail);
 
         return recommendedEmail.equals(issueBeingRecommended.getAssignee());
     }
