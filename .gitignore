@@ -18,6 +18,7 @@ data-gatherer/project-issue-data/*/JiraJSON
 data-gatherer/bin/*
 data-gatherer/data-gatherer.jar
 recommender/recommender.jar
+*/tests/output
 
 # Debug logs
 */log.txt
