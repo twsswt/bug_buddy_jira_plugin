@@ -106,4 +106,38 @@ public class FrequencyTableTest {
 
         assertEquals(expectedString, actualString);
     }
+
+    @Test
+    public void testIncrementWordDoesntExist() {
+        FrequencyTable ft = new FrequencyTable();
+
+        ft.incrementEntry("hello");
+
+        FrequencyTableEntry fte = ft.getEntryWithWord("hello");
+
+        assertEquals(1, fte.getFrequency());
+    }
+
+    @Test
+    public void testIncrementWord() {
+        FrequencyTable ft = new FrequencyTable();
+        ft.addEntry(new FrequencyTableEntry("hello", 1));
+
+        ft.incrementEntry("hello");
+
+        FrequencyTableEntry fte = ft.getEntryWithWord("hello");
+
+        assertEquals(2, fte.getFrequency());
+    }
+
+    @Test
+    public void testGetMostFrequentEntry() {
+        FrequencyTable ft = new FrequencyTable();
+        ft.addEntry(new FrequencyTableEntry("cat", 7));
+        ft.addEntry(new FrequencyTableEntry("dog", 6));
+
+        String mostFrequentEntry = ft.getMostFrequentEntry();
+
+        assertEquals("cat", mostFrequentEntry);
+    }
 }

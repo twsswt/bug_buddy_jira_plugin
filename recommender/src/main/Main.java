@@ -31,6 +31,9 @@ public class Main {
             case "word":
                 matcher.setMatchingAlgorithm(Matcher.MatchingAlgorithm.WORD_BASED);
                 break;
+            case "most-assigned":
+                matcher.setMatchingAlgorithm(Matcher.MatchingAlgorithm.MOST_ASSIGNED);
+                break;
             default:
                 matcher.setMatchingAlgorithm(Matcher.MatchingAlgorithm.WORD_BASED);
                 break;
@@ -44,7 +47,8 @@ public class Main {
 
         return "recommender.jar [algorithmToEvaluate] [jiraIP] [jiraPort]\n" + "Algorithms available:\n" +
                 "word\n" +
-                "skills";
+                "skills\n" +
+                "most-assigned";
     }
 
     /**

@@ -96,4 +96,38 @@ public class FrequencyTable {
         }
         return total;
     }
+
+    /**
+     * Increases the number of occurrences of a word by one
+     * @param word the word we want to increment
+     */
+    public void incrementEntry(String word) {
+        FrequencyTableEntry currentEntry = this.getEntryWithWord(word);
+
+        if (currentEntry == null) {
+            this.addEntry(new FrequencyTableEntry(word, 1));
+        } else {
+            this.entries.remove(currentEntry);
+            currentEntry.setFrequency(currentEntry.getFrequency()+1);
+            this.addEntry(currentEntry);
+        }
+    }
+
+    /**
+     * Returns the most frequent entry in the frequency table
+     * @return the most frequent entry
+     */
+    public String getMostFrequentEntry() {
+        String largestWord = "";
+        int largestFrequency = 0;
+
+        for (FrequencyTableEntry entry: this.entries) {
+            if (entry.getFrequency() > largestFrequency) {
+                largestWord = entry.getWord();
+                largestFrequency = entry.getFrequency();
+            }
+        }
+
+        return largestWord;
+    }
 }

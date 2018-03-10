@@ -213,12 +213,15 @@ public class Matcher {
                 recommendedEmail = findClosestMatchSkillBased(testIssue, allUsers);
                 break;
             }
+            case MOST_ASSIGNED: {
+                recommendedEmail = findClosestMatchMostAssigned(otherIssues);
+                break;
+            }
             default: {
                 logger.warn("Please choose a recommendation method");
                 break;
             }
         }
-
 
         logger.info("We recommend you assign this issue to " + recommendedEmail);
 
@@ -344,6 +347,22 @@ public class Matcher {
         return bestUser == null ? "" : bestUser.getEmail();
     }
 
+
+    /**
+     * Finds the 'closest match' by recommending the user who has
+     * been assigned to the most issues.
+     * @param issues the other issues we are basing the recommendation from
+     * @return the email of the closest match
+     */
+    private String findClosestMatchMostAssigned(List<JiraIssue> issues) {
+
+        FrequencyTable ft = new FrequencyTable();
+        for (JiraIssue issue : issues) {
+            ft.incrementEntry(issue.getAssignee());
+        }
+
+        return ft.getMostFrequentEntry();
+    }
     /**
      * Finds the closest match between an issue and a list of users, by
      * making use of their frequency tables.
@@ -376,6 +395,6 @@ public class Matcher {
      * when assigning users to issues
      */
     public enum MatchingAlgorithm {
-        WORD_BASED, SKILLS_BASED
+        WORD_BASED, SKILLS_BASED, MOST_ASSIGNED
     }
 }
