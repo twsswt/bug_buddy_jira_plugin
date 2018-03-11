@@ -256,6 +256,8 @@ public class Matcher {
         for (Skill skill : globalSkills) {
             int keywordHits = 0;
 
+            // Count the number of occurrences of skill related keywords
+            // in this users frequency table
             for (String keyword : skill.getKeywords()) {
                 FrequencyTableEntry entry = ft.getEntryWithWord(keyword);
                 if (entry != null) {
@@ -269,6 +271,8 @@ public class Matcher {
             double skillPercentage = keywordHits / (double) ft.getTotalWords();
 
             if (skillPercentage > threshold) {
+
+                // Associate this skill with the user
                 List<Skill> updatedSkillsList = user.getSkills();
                 updatedSkillsList.add(skill);
                 user.setSkills(updatedSkillsList);
