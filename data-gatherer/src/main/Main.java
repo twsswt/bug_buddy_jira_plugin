@@ -93,6 +93,12 @@ class Main {
         for (FirefoxIssue firefoxIssue : firefoxIssues) {
             String issueID = sender.sendPostCommandExtractIssueID("issues/" + firefoxIssue.getBugID() + ".json", "issue");
 
+            // If we encounter an error then DON'T send comments
+            if (issueID.equals("[]")) {
+                logger.warn("Problem encountered when adding issue " + firefoxIssue.getBugID());
+                continue;
+            }
+
             ArrayList<FirefoxComment> comments = firefoxIssue.getComments();
             for (int i = 0; i < comments.size(); i++) {
                 FirefoxComment comment = comments.get(i);
@@ -149,12 +155,28 @@ class Main {
     protected static Set<String> getAllUniqueEmails(List<FirefoxIssue> firefoxIssues) {
         Set<String> userEmails = new HashSet<>();
         for (FirefoxIssue issue : firefoxIssues) {
-            userEmails.add(issue.getAssigneeEmail());
-            userEmails.add(issue.getAssigneeEmail30Days());
-            userEmails.add(issue.getReporterEmail());
+
+            userEmails.add(ensureEmailIsValid(issue.getAssigneeEmail()));
+            userEmails.add(ensureEmailIsValid(issue.getAssigneeEmail30Days()));
+            userEmails.add(ensureEmailIsValid(issue.getReporterEmail()));
         }
-        userEmails.remove(null);
+        userEmails.remove("");
         return userEmails;
+    }
+
+    // Append 'com' to an invalid email to work around a weird bug
+    private static String ensureEmailIsValid(String email) {
+        if (email == null) {
+            return "";
+        }
+
+        int finalCharLocation = email.length() - 1;
+
+        if (email.charAt(finalCharLocation) == '.') {
+            email = email + "com";
+        }
+
+        return email;
     }
 
     private static void createAndWriteJiraProject(String jiraJSONLocation, Converter converter) {
