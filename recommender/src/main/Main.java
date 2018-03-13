@@ -82,6 +82,7 @@ public class Main {
         // Assign every issue to a user, and determine if our assignment was the same
         // as the actual assignment
         for (int i = 0; i < jiraIssues.size(); i++) {
+            logger.info("Matching issue " + (i+1) + "/" + jiraIssues.size());
             if (matcher.recommendUserAndValidate(jiraIssues, jiraIssues.get(i))) {
                 successfulMatches++;
             }
